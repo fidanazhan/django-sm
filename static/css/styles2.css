@@ -1,0 +1,1072 @@
+
+*{
+    margin: 0;
+    padding: 0;
+}
+
+hr{
+    margin: 8px 0;
+}
+
+.left-sidebar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 25%;
+    height: 100vh;
+    color: #000;
+    border-right: 1px solid;
+}
+
+.right-sidebar{
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 25%;
+    height: 100vh;
+    color: #000;
+    border-left: 1px solid;
+}
+
+.profile-bio{
+    padding: 15px;
+}
+
+.profile-header-background{
+    background-color: silver;
+    height: 200px;
+}
+
+.profile-picture{
+    background-color: transparent;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    z-index: 15;
+    margin-top: -85px;
+    margin-left: 15px;
+}
+
+.profile-image-circle{
+    border-radius: 50%;
+    margin-left: 60px;
+}
+
+.bio-settings-part{
+    display: inline-flex;
+    font-size: 20px;
+    margin-top: -70px;
+    margin-right: 20px;
+    z-index: 10;
+    padding: 5px;
+    width: 30%;
+    float: right;
+    height: 50px;
+    justify-content: space-evenly;
+}
+
+.bio-settings-part a, form{
+    color: black;
+    font-size: 25px;
+}
+
+.bio-settings-part .bx{
+    font-size: 23px;
+}
+
+.bio-settings-part a button{
+    border-radius: 50%;
+    padding: 8px;
+    cursor: pointer;
+    transition: 0.15s ease-in;
+}
+
+.bio-settings-part a button:hover{
+    background-color: #e3e3e3;
+}
+
+.bio-settings-part .button-follow{
+    background-color: black;
+    color: white;
+    border: none;
+    font-weight: 500;
+    padding: 10px 15px 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.15s ease-in;
+}
+
+.bio-settings-part .button-follow:hover{
+    background-color: white;
+    color: black;
+    border: .5px solid black;
+}
+
+.bio-settings-part p{
+    font-size: 16px;
+}
+
+.intro-bio{
+    padding: 0 30px 0 0;
+}
+
+.profile-tabs{
+    position: relative;
+    display: flex;
+}
+
+.profile-links {
+    margin: 0 0.5%;
+    width: 24%;
+    padding: 5px 0;
+    font-size: 15px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.15s ease-in;
+    position: relative;
+    z-index: 1;
+}
+
+.profile-links:hover{
+    background-color: #dddddd;
+}
+
+.profile-links.active{
+    background-color: #ccc;
+}
+
+/* 
+.profile-tabs .slider{
+    position: absolute;
+    background-image: linear-gradient(315deg, #eec0c6 0%, #e58c8a 74%);
+    margin: 0 0.5%;
+    width: 24%;
+    border-radius: 5px;
+    /* height: 3px; 
+    height: 100%;
+    bottom: 0;
+    z-index: 2;
+    transition: 0.15s ease-in;
+} 
+*/
+
+.right-sidebar-dm{
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 47.5%;
+    height: 100vh;
+    color: #000;
+    border-left: 1px solid;
+}
+
+.profile-content{
+    display: none;
+    transition: 10s;
+}
+
+.main{
+    display: block;
+    margin-left: 25%;
+    margin-right: 25%;
+    font-size: 20px;
+}
+
+.main-dm{
+    display: block;
+    margin-left: 25%;
+    margin-right: 47.5%;
+    font-size: 20px;
+}
+
+.search-box{
+    padding: 5px 10px;
+}
+
+.main-header{
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+    padding: 10px 10px;
+    z-index: 100;
+    width: 50%;
+    position: fixed;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(50px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.main-header-dm{
+    width: 27.5%;
+    backdrop-filter: none;
+
+}
+
+.main-body-hr{
+    background-color: #888;
+}
+
+.main-content, .content{
+    font-size: 12px;
+}
+
+.image-header{
+    display: flex;
+}
+
+.image-header-size{
+    width: 30px;
+    height: 30px;
+    border-radius: 50px;
+}
+
+.toggle-header, .image-header{
+    display: none;
+}
+
+.sidebar__title{
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 30px;
+}
+
+.sidebar__title .fa-times{
+    display: none;
+    font-size: 22px;
+    margin: 3px 10px 0 10px;
+}
+
+.sidebar-left{
+    background-color: rgb(100, 242, 100);
+}
+
+.sidebar__menu{
+    padding: 2.5rem 10px;
+    margin: 0 0 0 2rem;
+}
+
+.sidebar__link{
+    padding: 10px 0;
+    padding-left: 50px;
+    font-size: 20px;
+    font-weight: 600;
+    transition: .6s;
+}
+
+.sidebar__link > i {
+    margin-right: 5px;
+}
+
+.sidebar__link > a{
+    text-decoration: none;
+    color: black;
+}
+
+.sidebar__link:hover{
+    color: #e58c8a;
+    margin-left: 30px;
+}
+
+.sidebar_quack_post, .sidebar__logout{
+    padding: 10px 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.quack-button {
+    background-image: linear-gradient(315deg, #eec0c6 0%, #e58c8a 74%);
+    padding: 9px 50px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    color: #ffffff;
+
+}
+
+.sidebar__logout > button{
+    padding: 7px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.sidebar__logout a{
+    text-decoration: none;
+    color: #000;
+}
+
+.nav__icon__logout{
+    padding: 0 5px;
+}
+
+.sidebar__logout button:hover{
+    cursor: pointer;
+    background-color: #ecf0f1;
+}
+
+.pad-t{
+    color: white;
+    padding: 10px 0;
+}
+
+.story{
+    padding: 10px;
+}
+
+.post, .notification-feed{
+    padding: 10px;
+}
+
+.anchor-post-feed{
+    background-color: red;
+}
+
+.anchor-post-feed:hover{
+    display: block;
+    background-color: #f1f1f1;
+
+}
+
+.post-feed{
+    position: relative;
+    padding: 5px 10px;
+    margin: 10px 15px;
+    border-radius: 10px;
+    box-shadow: 1px 1px 1px 2px #e7e7e7;
+}
+
+/* .post-feed:hover{
+    cursor: pointer;
+    background-color: #f1f1f1;
+} */
+
+.post-feed .post-link{
+    position: absolute;
+    display: block;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+}
+
+.post-link:hover{
+    background-color: #a5a5a5;
+    opacity: 0.1;
+    border-radius: 10px;
+}
+
+.post-inner{
+    display: flex;
+    width: 100%;
+}
+
+.post-pro-pic{
+    position: relative;
+    margin: 5px 10px 0px 0;
+    z-index: 14;
+}
+
+.post-pro-pic-inner{
+    height: 60px;
+    width: 50px;
+    background: transparent;
+}
+
+.post-image-circle{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    z-index: 14;
+}
+
+.post-image-circle-child-comment{
+    width: 56px;
+    height: 52px;
+    margin-top: 4px;
+    border-radius: 50%;
+    z-index: 14;
+}
+
+
+.post-content{
+    position: relative;
+    width: 100%;
+    /* z-index: 11; */
+}
+
+.post-content-header{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0;
+    padding-top: 0;
+    z-index: 11;
+}
+
+.left-post-content-header{
+    position: relative;
+
+}
+
+.right-post-content-header{
+    float: right;
+}
+
+.post-content .pro-name{
+    color: black;
+    position: absolute;
+    display: inline;
+    font-size: 17px;
+    font-weight: 500;
+    z-index: 11;
+    margin-top: 7.5px;
+}
+
+.post-content .pro-username{
+    position: relative;
+    display: inline-block;
+    color: rgb(105, 105, 105);
+    font-size: 12.5px;
+    z-index: 11;
+}
+
+.post-content .post-dot, .post-time{
+    position: absolute;
+    font-size: 12px;
+    z-index: 11;
+    margin-top: 30px;
+
+}
+
+.post-content .post-ellipsis{
+    position: relative;
+    font-size: 13px;
+    float: right;
+    padding: 10px 10px 0 0;
+    z-index: 11;
+    cursor: pointer;
+}
+
+.post-content .post-ellipsis-content-edit{
+    display: none;
+    font-size: 13px;
+    position: absolute;
+    height: 250px;
+    width: 200px;
+    background-color: #dbdbdb;
+    right: 30px;
+    top: 15px;
+    z-index: 20;
+    border-radius: 5px;
+    padding: 8px 15px;
+    transition: all 0.6s;
+}
+
+#postEllipsis.post-active{
+    display: block;
+}
+
+.comment-body{
+    font-size: 16px;
+    font-weight: 400;
+    padding: 5px 10px 0;
+    text-align: justify;
+    word-break: break-all;
+    cursor: auto;
+}
+
+.post-content-footer{
+    display: flex;
+    justify-content: space-around;
+    margin-top: -10px;
+}
+
+.post-content-footer div{
+    position: relative;
+    z-index: 11;
+}
+
+.post-content-footer button{
+    border: none;
+    font-size: 15px;
+    color: rgb(69, 69, 243);
+    cursor: pointer;
+    background: transparent;
+}
+
+.post-box{
+    resize: none;
+    width: -webkit-fill-available;
+    padding: 5px;
+    outline: none !important;
+    border: none;
+}
+
+.image-size{
+    width: 45px;
+    height: 45px;
+}
+
+.image-circle{
+    position: absolute;
+    width: 45px;
+    height: 45px;
+    border-radius: 50px;
+    z-index: 11;
+}
+
+.number-of-reaction{
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.red{
+    color: rgb(244, 77, 77);
+}
+
+.green{
+    color: rgb(46, 163, 0);
+}
+
+.comment-feed{
+    position: relative;
+    margin: 10px 15px;
+    border-radius: 10px;
+    box-shadow: 1px 1px 1px 2px #e7e7e7;
+}
+
+.root .comment-link{
+    position: absolute;
+    display: block;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+}
+
+.root .comment-link:hover{
+    background-color: #a5a5a5;
+    opacity: 0.1;
+}
+
+.post-reaction-item, .post-reaction-item-comment, .post-reaction-item-sub-comment{
+    display: flex;
+    justify-content: space-around;
+    width: 80%;
+
+}
+
+.post-reaction-item{
+    width: 80%;
+}
+
+.reply-icon, .retweet-icon, .heart-icon{
+    align-items: center;
+    display: flex;
+    flex-basis: auto;
+    flex-shrink: 0;
+    justify-content: center;
+}
+
+.submit-button{
+    float: right;
+    background-color: rgb(248, 185, 185);
+    padding: 7px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.postButton{
+    cursor: pointer;
+    height: 2rem;
+    width: 6rem;
+    background-image: linear-gradient(315deg, #eec0c6 0%, #e58c8a 74%);
+    border: none;
+    font-size: 14px;
+    color: var(--white-color);
+    border-radius: 10px;
+}
+
+button {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    font-size: 14px;
+    padding: 4px 8px;
+    color: rgba(0, 0, 0, 0.85);
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+.sr-only {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* Comment */
+
+.comment {
+    position: relative;
+    padding: 10px;
+}
+
+.hr-1{
+    margin: 0;
+    z-index: 100;
+}
+
+.hr-2{
+    margin: 2px 0;
+}
+
+.hr-3{
+    background: linear-gradient(145deg, rgba(165, 52, 183, 0.9),rgba(249, 13, 202, 0.774));
+    height: 1px;
+}
+
+
+
+/* Adjustments for the comment border links */
+
+.comment-border-link {
+    display: block;
+    position: absolute;
+    top: 20px;
+    left: 30px;
+    width: 12px;
+    height: 100%;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    background-color: rgba(0, 0, 0, 0.1);
+    background-clip: padding-box;
+}
+
+.comment-border-link:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.root .comment:last-of-type .comment-border-link{
+    display: none;
+}
+
+.replies .hr-1{
+    display: none;
+}
+
+.comment:last-child{
+    padding: 10px 10px 8px;
+}
+
+.comment:last-of-type .comment-border-link{
+    display: none;
+}
+
+.current-comment .post-inner{
+    display: block;
+}
+
+.current-comment .post-pro-pic{
+    display: flex;
+    justify-content: space-between;
+}
+
+.current-comment .pro-name{
+    position: absolute;
+    top: 10px;
+}
+
+.current-comment .post-content{
+    padding: 0;
+}
+
+.post-current-left-header{
+    display: flex;
+}
+
+.post-pro-name{
+    margin-left: 10px;
+}
+
+.post-pro-name .pro-name{
+    font-size: 16px;
+    color: #000;
+    font-weight: 600;
+}
+
+.post-pro-name .pro-username{
+    font-size: 15px;
+    display: block;
+    color: #a5a5a5;
+}
+
+.post-current-content-body p{
+    font-size: 20px;
+    text-align: justify;
+    word-break: break-all;
+    cursor: auto;
+}
+
+.post-current-time-posted{
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.current-comment .post-content-footer{
+    padding: 0;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.current-comment .post-content-footer div{
+    margin: 0;
+}
+
+
+.post-quack-requack-likes-count{
+    display: flex;
+}
+
+.post-quack-requack-likes-count p{
+    font-size: 18px;
+    padding: 0 10px; 
+}
+
+.post-quack-requack-likes-count span{
+    font-size: 20px;
+    font-weight: 0;
+    font-weight: 600;
+}
+
+.post-inner-comment-form{
+    display: flex;
+}
+
+.post-content-comment-form{
+    padding: 10px 0;
+    width: 100%;
+}
+
+.post-content-form-grid{
+    display: grid;
+    grid-template-columns: 9fr 1fr;
+}
+
+.post-content-form-right{
+    display: flex;
+    align-items: center;
+    color: #fff;
+}
+
+.comment-reply-to-p, .comment-reply-to-a{
+    font-size: 13.5px;
+}
+
+.comment-reply-to-p{
+    font-weight: 200;
+    padding: 0 10px 0;
+}
+
+/* --------------- NOTIFICATION ---------------- */
+.notification-type-sentences{
+    position: relative;
+    font-size: 13px;
+    font-weight: 500;
+    z-index: 13;
+    margin-bottom: 10px;
+}
+
+.show{
+    left: 0;
+}
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 100000; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    transition: all 2s;
+}
+  
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 60%;
+    transition: all 0.5s;
+    border-radius: 10px;
+}
+
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+  
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* ----------------- PROFILE CSS ------------------- */
+
+.right-sidebar-header{
+    display: flex;
+    padding: 10px 20px;
+    border-bottom: 2px solid #888;
+}
+
+.person-name-dm{
+    font-size: 20px;
+    margin-left: 20px;
+}
+
+.right-sidebar-body{
+    margin: 10px;
+    height: 100vh;
+}
+
+.left-person{
+    display: inline-flex;
+}
+
+.image-dp-body-dm{
+    padding: 5px 5px 5px 0;
+}
+
+.messages-body-dm{
+    padding: 8px 8px;
+    width: 500px;
+    border-radius: 5px;
+}
+
+.right-person .messages-body-dm{
+    margin-left: auto;
+    margin-bottom: 5px;
+    background-color: #e6e6e6;
+}
+
+.left-person .messages-body-dm{
+    background-image: linear-gradient(315deg, #eec0c6 0%, #f6c7c6 74%);;
+}
+
+
+.dm-feed{
+    padding-top: 5px;
+}
+
+.media-dm{
+    padding: 0 5px 0 10px;
+}
+
+.profile-name p{
+    display: block;
+    margin-top: -5px;
+}
+
+.profile-nickname{
+    font-size: 24px;
+    font-weight: 600;
+    color: black;
+}
+
+.profile-username{
+    font-size: 18px;
+    color: rgb(165, 159, 159);
+}
+
+.intro-bio{
+    margin-top: 8px;
+}
+
+.personal-bio .bx{
+    font-size: 15px;
+}
+
+.intro-bio p, .personal-bio a, .personal-bio p{
+    font-size: 15px;
+}
+
+.date-joined-bio p{
+    display: inline;
+}
+
+
+@media only screen and (max-width: 1279px) {
+    
+    .right-sidebar{
+        display: none;
+    }
+
+    .right-sidebar-dm{
+        position: absolute;
+        display: none;
+    }
+
+    .main, .main-dm{
+        margin: 0;
+    }
+
+    .main-header{
+        width: 100%;
+    }
+
+    .toggle-header, .image-header{
+        display: inline-block;
+    }
+
+    .post-reaction-item{
+        width: 95%;
+    }
+
+    .left-sidebar{
+        position: fixed;
+        top: 0;
+        left: -35%;
+        width: 270px;
+        height: 100vh;
+        padding:.5rem 1rem  0 0;
+        transition: .5s;
+        z-index: 10000;
+        border-right: #ecf0f1 solid 2px;
+        background-color: #fff;
+        transition: 0.5s ease-in;
+    }
+
+    .sidebar__link{
+        padding-left: 10px;
+    }
+
+    .sidebar__title .fa-times{
+        display: block;
+    }
+
+    .profile-picture{
+        width: 100px;
+        height: 100px;
+        margin-top: -55px;
+    }
+
+    .bio-settings-part{
+        width: 65%;
+        justify-content: space-evenly;
+        margin-top: -55px;
+    }
+
+    .profile-header-background{
+        height: 150px;
+    }
+    
+    .post-content-footer {
+        justify-content: space-between;
+    }
+    
+}
+
+@media only screen and (max-width: 767px) {
+
+    .header__img{
+        width: 40px;
+        height: 40px;
+    }
+
+    .header__img img{
+        width: 45px;
+    }
+
+    .left-sidebar{
+        left: -70%;
+    }
+
+    .bio-settings-part{
+        margin-right: 0;
+    }
+
+    .right-post-content-header {
+        float: right;
+        margin-left: 100px;
+    }
+
+}
+
+@media only screen and (max-width: 385px) {
+    .pad-t{
+        padding: 15px 0;
+    }
+
+    .left-sidebar{
+        left: -100%;
+    }
+
+}
+
+@media only screen and (max-width: 330px) {
+    .bio-settings-part{
+        justify-content: right;
+        margin-top: -60px;
+        font-size: 15px;
+        margin-right: 5px;
+    }
+
+    .bio-settings-part .bx {
+        font-size: 17px;
+    }
+    
+    .bio-settings-part a button {
+        padding: 4px;
+    }
+
+    .bio-settings-part .button-follow{
+        height: 30px;
+        padding: 3px 15px;
+        margin: 5px 5px 0 5px;
+    }
+
+    .bio-settings-part p {
+        font-size: 12px;
+    }
+
+    .bio-settings-part a {
+        margin: 0 5px;
+    }
+
+    .profile-nickname{
+        font-size: 20px;
+
+    }
+    
+    .profile-username{
+        font-size: 14px;
+    }
+
+    
+
+}

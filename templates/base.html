@@ -1,0 +1,164 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} {% endblock %} | QuackQuack</title>
+
+    <!-- <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+      crossorigin="anonymous"
+    /> -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <script src="https://kit.fontawesome.com/04f8fa261d.js" crossorigin="anonymous"></script>
+
+
+    <link href='https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css' rel='stylesheet'>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="{% static 'css/styles2.css' %}">
+
+
+
+</head>
+<body>
+    <section class="left-sidebar" id="nav-bar"> 
+        <!-- Responsive Left Navigation -->
+        <div class="sidebar__title">
+            <div class="sidebar_nav_logo">
+                Nav Logo
+            </div>
+            <i
+            onclick="closeLeftSidebar()"
+            class="fa fa-times"
+            id="sidebarIcon"
+            aria-hidden="True"></i>
+        </div>
+        <!-- End Responsive Left Navigation-->
+
+        <div class="sidebar__menu">
+
+            <a href="{% url 'post-list' %}" class="sidebar__link">
+              <i class="bx bx-grid-alt nav__icon"></i>
+              <span>Home</span>            
+            </a>
+            <div class="sidebar__link">
+              <i class="bx bx-message-square-detail nav__icon"></i>
+              <a href="">Explore</a>
+            </div>
+            <div class="sidebar__link">
+              <i class="bx bx-bell nav__icon"></i>
+              <a href="">Notification</a>
+            </div>
+            <div class="sidebar__link">
+              <i class="bx bx-envelope nav__icon"></i>
+              <a href="">Messages</a>
+            </div>
+            <div class="sidebar__link">
+              <i class="bx bx-bookmark nav__icon"></i>
+              <a href="">Bookmark</a>
+            </div>
+            <div class="sidebar__link">
+              <i class="bx bx-user nav__icon"></i>
+              <a href="">Group</a>
+            </div>
+            <div class="sidebar__link">
+              <i class="bx bx-folder nav__icon"></i>
+              <a href="">Settings</a>
+            </div>
+            <!-- <div class="sidebar__link">
+                <i class="fa fa-ellipsis-h"></i>
+                <a href="">More</a>
+            </div> -->
+        </div>
+
+        
+
+        <div class="sidebar_quack_post">
+          <button id="myBtn" class="quack-button" type="button">Quack</button>
+        </div>
+
+        <div class="sidebar__logout">    
+            <button>
+              <i class="bx bx-log-out nav__icon__logout"></i>
+              <a href="{% url 'logout' %}">Logout</a>
+            </button>
+        </div>
+    </section>
+
+    {% if request.path == '/messages/' %}
+        {% block messages %}
+
+        {% endblock %}
+    {% else %}
+        {% block content %}
+
+        {% endblock %}
+
+        {% block right_sidebar %}
+            <section class="right-sidebar"> 
+                <div class="search-box">
+                <i class="fa fa-search" aria-hidden="true"></i>
+        
+                </div>
+            </section>
+        {% endblock %}
+    {% endif %}
+
+
+    <div id="myModal" class="modal">
+
+      <!-- Modal content -->
+      <div class="modal-content">      
+        <span class="close">&times;</span>
+
+          <div class="post">
+
+            <article class="media">
+              <figure class="media-left">
+                <p class="image image-size">
+                  <img class="image-circle" src="https://bulma.io/images/placeholders/128x128.png">
+                </p>
+              </figure>
+              <div class="media-content">
+                <div class="content">
+                    <strong>{{ request.user.username }}</strong> <small>@{{ request.user.username }}</small>
+                    <br>
+
+                    <form action="{% url 'post-list' %}" method="post">
+                      <!-- <textarea class="post-box" id="w3review" name="w3review" rows="4" cols="50" placeholder="What's happening..."></textarea> -->
+                      {% csrf_token %}
+
+                      <!-- <textarea class="post-box" id="w3review" name="w3review" rows="4" cols="50" placeholder="What's happening..."></textarea> -->
+                      
+                      {{ form.post_body }}
+                      
+                      <br>
+                      <div class="quackBoxButton">
+                        <button style="float: right;" type="submit" class="postButton" id="submitPost">
+                            Quack
+                        </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </article>          
+          </div>
+      </div>
+    
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <script src='https://code.jquery.com/jquery-3.2.1.min.js'></script>
+
+    <script src="{% static 'js/main.js' %}"></script>
+
+</body>
+</html>

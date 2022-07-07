@@ -1,0 +1,449 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% load class_name %}
+{% load upto %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+
+    <div class="main"> 
+        <div class="main-header">
+          <div class="toggle-header">
+            <button onclick="openLeftSidebar()">
+              <i class="bx bx-menu" id="header-toggle">
+              </i>
+            </button>
+          </div>
+            {{ user_profile.user.username }}
+          <div class="image-header">
+            <p class="image image-header-size">
+              {% if user_profile.picture %}
+                    <img class="profile-image-circle" src="{{ user_profile.picture.url }}" alt="">
+                {% endif %}
+            </p>
+          </div>
+        </div>
+        <div class="main-body">
+              <div class="pad-t">  
+                .              
+              </div>
+              <hr class="hr-1">
+              <div class="profile-header-background">
+                
+
+              </div>
+              <hr class="hr-1">
+              <div class="profile-picture">
+                {% if user_profile.picture %}
+                    <img class="profile-image-circle" src="{{ user_profile.picture.url }}" alt="">
+                {% endif %}
+              </div>
+              <div class="profile-bio">
+                
+                <div class="bio-settings-part">
+                  <a>
+                    <button type="button">
+                      <i class='bx bx-dots-horizontal-rounded'></i>
+                    </button>
+                  </a>
+                  <a>
+                    <button type="button">
+                      <i class='bx bx-envelope' ></i>
+                    </button>                  
+                  </a>
+                  {% if request.user == user_profile.user%}
+
+                  {% else %}
+                  
+
+                 {% endif %}
+                </div>
+
+                <div class="profile-name">
+                  <p class="profile-nickname">{{ user_profile.user.username }}</p>
+                  <p class="profile-username">@{{ user_profile.user.username }}</p>
+                </div>
+                
+                <div class="intro-bio">
+                  {% if user_profile.bio == None %}
+                  <p></p>
+                  {% else %}
+                  <p>{{ user_profile.bio }}</p>
+                  {% endif %} 
+                </div>
+                <div class="personal-bio">
+                  <span class="website-bio">
+                    <i class='bx bx-link'></i>
+                    {% if user_profile.bio == None %}
+                    <span style="display:inline-block">     </span>
+                    {% else %}
+                    <a>{{ user_profile.url }}</a>
+                    {% endif %}
+                  </span>
+                  <span class="date-joined-bio">
+                    <i class='bx bx-calendar'></i>
+                    <p>Joined 28 August 2021</p> 
+                  </span>
+                
+                </div>
+              </div>
+              <hr class="hr-2">
+              <div class="profile-tabs">
+                
+
+                <button class="profile-links active" onclick="openContent(event, 'post-feed')" id="defaultOpen">Quack</button>
+                <button class="profile-links" onclick="openContent(event, 'post-and-reply-feed')">Quack & Replies</button>
+                <button class="profile-links" onclick="openContent(event, 'post-media-feed')">Media</button>
+                <button class="profile-links" onclick="openContent(event, 'post-liked-feed')">Likes</button>
+              </div>
+
+              <hr class="hr-2">           
+              
+              <div id="post-feed" class="profile-content">
+              {% for post in user_post %}
+              <div class="post-feed">
+                <div class="post-inner">
+                  
+                  <div class="post-content" id="post-{{post.pk}}">
+                    <div class="post-content-header">
+                      <div class="left-post-content-header">
+                        <span class="post-pro-pic">
+                          {% if post.user.profile.picture %}
+                            <a href="{% url 'profile' post.user.username %}">
+                              <img class="post-image-circle" src="{{ post.user.profile.picture.url }}" alt="">
+                            </a>
+                          {% endif %}
+                        </span>
+                        <a href="{% url 'profile' post.user.username %}" class="pro-name">@{{ post.user.username }}</a> 
+                        <span class="post-time">{{ post.created_on|timesince|upto:',' }}</span> 
+                      </div>
+                      <div class="right-post-content-header">
+                        <span class="post-ellipsis"><i class="fa fa-ellipsis-h"></i></span>
+                      </div>
+                    </div>
+                    <div class="post-content-body">
+                      <p class="comment-body">{{post.post_body}}</p>
+                    </div>
+                    <div class="post-content-footer">
+                        <div class="reply-icon">
+                          <button>
+                            <a class="fa fa-reply" href="{% url 'post-detail' post.user.username post.pk %}"></a>
+                          </button>
+                        </div>
+    
+                        <div class="retweet-icon">
+                          <form action="" method="post">
+                              <button type="submit">
+                                <span class="icon is-small"><i class="fa fa-retweet"></i></span>
+                              </button>
+                          </form>
+                        </div>
+                        
+    
+                        <div class="heart-icon">
+  
+                          <form action="{% url 'post-like' post.pk %}" method="post">
+  
+                            {% csrf_token %}
+  
+                            <input type="hidden" name="next" value="{{ request.path }}">
+                            
+  
+                            <button type="submit">    
+  
+                                {% if request.user in post.likes.all %}
+                                  <span class="icon is-small"><i class="fa fa-heart red" id="heart-toggle"></i></span>
+                                  <!-- <span  class="like-btn{{post.pk}}">Liked</span>  -->
+  
+                                {% else %}
+                                  <span class="icon is-small"><i class="fa fa-regular fa-heart" id="heart-toggle"></i></span>
+                                  <!-- <span  class="like-btn{{post.pk}}">Like</span>  -->
+  
+                                {% endif %}
+                                <i class="number-of-reaction">{{ post.likes.all.count }}</i>
+  
+                            </button>
+                          </form>
+    
+                            
+                        </div>
+    
+                        <div class="post-saved-item">
+                          <form action="" method="post">
+                            <button type="submit">
+                                <span class="icon is-small"><i class="fa fa-bookmark"></i></span>
+                            </button>
+                          </form>
+                        </div>
+                    </div>
+    
+                  </div>
+                </div>
+                <a href="{% url 'post-detail' post.user.username post.pk %}" class="post-link"></a>
+              </div>
+
+              <hr class="hr-1">
+              {% endfor %}
+              </div>
+
+              <div id="post-and-reply-feed" class="profile-content">
+              {% for post in user_post %}
+              <div class="post-feed">
+                <div class="post-inner">
+                  
+                  <div class="post-content" id="post-{{post.pk}}">
+                    <div class="post-content-header">
+                      <div class="left-post-content-header">
+                        <span class="post-pro-pic">
+                          {% if post.user.profile.picture %}
+                            <a href="{% url 'profile' post.user.username %}">
+                              <img class="post-image-circle" src="{{ post.user.profile.picture.url }}" alt="">
+                            </a>
+                          {% endif %}
+                        </span>
+                        <a href="{% url 'profile' post.user.username %}" class="pro-name">@{{ post.user.username }}</a> 
+                        <span class="post-time">{{ post.created_on|timesince|upto:',' }}</span> 
+                      </div>
+                      <div class="right-post-content-header">
+                        <span class="post-ellipsis"><i class="fa fa-ellipsis-h"></i></span>
+                      </div>
+                    </div>
+                    <div class="post-content-body">
+                      <p class="comment-body">{{post.post_body}}</p>
+                    </div>
+                    <div class="post-content-footer">
+                        <div class="reply-icon">
+                          <button>
+                            <a class="fa fa-reply" href="{% url 'post-detail' post.user.username post.pk %}"></a>
+                          </button>
+                        </div>
+    
+                        <div class="retweet-icon">
+                          <form action="" method="post">
+                              <button type="submit">
+                                <span class="icon is-small"><i class="fa fa-retweet"></i></span>
+                              </button>
+                          </form>
+                        </div>
+                        
+    
+                        <div class="heart-icon">
+  
+                          <form action="{% url 'post-like' post.pk %}" method="post">
+  
+                            {% csrf_token %}
+  
+                            <input type="hidden" name="next" value="{{ request.path }}">
+                            
+  
+                            <button type="submit">    
+  
+                                {% if request.user in post.likes.all %}
+                                  <span class="icon is-small"><i class="fa fa-heart red" id="heart-toggle"></i></span>
+                                  <!-- <span  class="like-btn{{post.pk}}">Liked</span>  -->
+  
+                                {% else %}
+                                  <span class="icon is-small"><i class="fa fa-regular fa-heart" id="heart-toggle"></i></span>
+                                  <!-- <span  class="like-btn{{post.pk}}">Like</span>  -->
+  
+                                {% endif %}
+                                <i class="number-of-reaction">{{ post.likes.all.count }}</i>
+  
+                            </button>
+                          </form>
+    
+                            
+                        </div>
+    
+                        <div class="post-saved-item">
+                          <form action="" method="post">
+                            <button type="submit">
+                                <span class="icon is-small"><i class="fa fa-bookmark"></i></span>
+                            </button>
+                          </form>
+                        </div>
+                    </div>
+    
+                  </div>
+                </div>
+                <a href="{% url 'post-detail' post.user.username post.pk %}" class="post-link"></a>
+              </div>
+              {% endfor %}
+              </div>
+
+              <div id="post-media-feed" class="profile-content">
+                <div class="post-feed">
+                  <article class="media">
+                      <figure class="media-left">
+                        <p class="image image-size">
+                          <img class="image-circle" src="https://bulma.io/images/placeholders/128x128.png">
+                        </p>
+                      </figure>
+                      <div class="media-content">
+                        <div class="content">
+                          <p>
+                            <strong>Wesley Collins</strong> <small>@wesleycollins</small> <small>31m</small>
+                            <br>
+                            Test 2
+                          </p>
+                        </div>
+                        <nav class="level is-mobile">
+                          <div class="post-reaction-item">
+                            <a class="reply-icon">
+                              <span class="icon is-small"><i class="fa fa-reply"></i></span>
+                            </a>
+                            <a class="retweet-icon">
+                              <span class="icon is-small"><i class="fa fa-retweet"></i></span>
+                            </a>
+                            <a class="heart-icon">
+                              <span class="icon is-small"><i class="fa fa-heart"></i></span>
+                            </a>
+                          </div>
+  
+                          <div class="post-saved-item">
+                            <a class="heart-icon">
+                              <span class="icon is-small"><i class="fa fa-bookmark"></i></span>
+                            </a>
+                          </div>
+                        </nav>
+                      </div>
+                      <div class="media-right">
+                        <button class="delete"></button>
+                      </div>
+                    </article>
+                </div>
+              </div>
+
+              <div id="post-liked-feed" class="profile-content">
+                {% for post_liked in user_post_liked %}
+                  <div class="post-feed">
+                    <div class="post-inner">
+                      <div class="post-content" id="post-{{post.pk}}">
+                        <div class="post-content-header">
+                          <div class="left-post-content-header">
+                            {% if post_liked.liked_post != None %}
+                              <span class="post-pro-pic">
+                                {% if post_liked.user.profile.picture %}
+                                  <a href="{% url 'profile' post_liked.liked_post.user.username %}">
+                                    <img class="post-image-circle" src="{{ post_liked.liked_post.user.profile.picture.url }}" alt="">
+                                  </a>
+                                {% endif %}
+                              </span>
+                              <a href="{% url 'profile' post_liked.liked_post.user.username %}" class="pro-name">@{{ post_liked.liked_post.user.username }}</a> 
+                              <span class="post-time">{{ post_liked.liked_post.created_on|timesince|upto:',' }}</span> 
+                            {% else %}
+                              <span class="post-pro-pic">
+                                {% if post_liked.user.profile.picture %}
+                                  <a href="{% url 'profile' post_liked.liked_comment.user.username %}">
+                                    <img class="post-image-circle" src="{{ post_liked.liked_comment.user.profile.picture.url }}" alt="">
+                                  </a>
+                                {% endif %}
+                              </span>
+                              <a href="{% url 'profile' post_liked.liked_comment.user.username %}" class="pro-name">@{{ post_liked.liked_comment.user.username }}</a> 
+                              <span class="post-time">{{ post_liked.liked_comment.created_on|timesince|upto:',' }}</span> 
+                            {% endif %}
+                          </div>
+                          <div class="right-post-content-header">
+                            <span class="post-ellipsis"><i class="fa fa-ellipsis-h"></i></span>
+                          </div>
+                        </div>
+                        <div class="post-content-body">
+                          {% if post_liked.liked_post != None %}
+                            <p class="comment-body">{{post_liked.liked_post.post_body}}</p>
+                          {% else %}
+                            <p class="comment-body">{{post_liked.liked_comment.commented_body}}</p>
+                          {% endif %}
+
+                        </div>
+                        <div class="post-content-footer">
+                            <div class="reply-icon">
+                              <button>
+                                
+                              </button>
+                            </div>
+        
+                            <div class="retweet-icon">
+                              <form action="" method="post">
+                                  <button type="submit">
+                                    <span class="icon is-small"><i class="fa fa-retweet"></i></span>
+                                  </button>
+                              </form>
+                            </div>                           
+
+                            <div class="heart-icon">
+        
+                              {% if post_liked.liked_post != None %}
+                                <form action="{% url 'post-like' post_liked.liked_post.pk %}" method="post">
+                                  {% csrf_token %}
+          
+                                  <input type="hidden" name="next" value="{{ request.path }}">
+                                  
+          
+                                  <button type="submit">    
+        
+                                      {% if request.user|user_liked_in_post:post_liked.liked_post %}
+                                        <span class="icon is-small"><i class="fa fa-heart red" id="heart-toggle"></i></span>
+                                        <!-- <span  class="like-btn{{post.pk}}">Liked</span>  -->
+        
+                                      {% else %}
+                                        <span class="icon is-small"><i class="fa fa-regular fa-heart" id="heart-toggle"></i></span>
+                                        <!-- <span  class="like-btn{{post.pk}}">Like</span>  -->
+        
+                                      {% endif %}
+                                      <i class="number-of-reaction">{{ post_liked.liked_post.likes.count }}</i>
+        
+                                  </button>
+              
+                                </form>
+                              {% else %}
+                                <form action="{% url 'comment-like' post_liked.liked_comment.pk %}" method="post">
+                                  {% csrf_token %}
+          
+                                  <input type="hidden" name="next" value="{{ request.path }}">
+                                  
+          
+                                  <button type="submit">    
+        
+                                      {% if request.user|user_liked_in_comment:post_liked.liked_comment %}
+                                        <span class="icon is-small"><i class="fa fa-heart red" id="heart-toggle"></i></span>
+                                        <!-- <span  class="like-btn{{post.pk}}">Liked</span>  -->
+        
+                                      {% else %}
+                                        <span class="icon is-small"><i class="fa fa-regular fa-heart" id="heart-toggle"></i></span>
+                                        <!-- <span  class="like-btn{{post.pk}}">Like</span>  -->
+        
+                                      {% endif %}
+                                      <i class="number-of-reaction">{{ post_liked.liked_comment.likes.count }}</i>
+        
+                                  </button>
+              
+                                </form>
+
+
+
+                                
+                              {% endif %}
+                                
+                            </div>
+        
+                            <div class="post-saved-item">
+                              <form action="" method="post">
+                                <button type="submit">
+                                    <span class="icon is-small"><i class="fa fa-bookmark"></i></span>
+                                </button>
+                              </form>
+                            </div>
+                        </div>
+        
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>     
+        </div>
+    </div>
+
+{% endblock%}
