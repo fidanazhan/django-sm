@@ -736,6 +736,11 @@ button {
     margin: 0;
 }
 
+.current-comment .comment-reply-to-p, .comment-reply-to-a{
+    padding: 0;
+    font-size: 13.5px;
+}
+
 
 .post-quack-requack-likes-count{
     display: flex;

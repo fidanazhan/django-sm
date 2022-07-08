@@ -24,7 +24,7 @@ def user_directory_path(instance, filename):
 	return profile_pic_name
 
 def default_profile_picture():
-    default_profile_pic_name = 'media/profile_picture/default.png'
+    default_profile_pic_name = 'profile_picture/default.png'
     full_path = os.path.join(settings.MEDIA_ROOT, default_profile_pic_name)
     print(full_path)
     
@@ -41,11 +41,18 @@ class Profile(models.Model):
     bio = models.CharField(max_length=256, blank=True, null=True)
     url = models.CharField(max_length=256, blank=True, null=True)
     location = models.CharField(max_length=256, blank=True, null=True)
-    picture = models.ImageField(upload_to=user_directory_path, default='media/profile_picture/default.png', blank=True, null=True)
-    # following = models.ManyToManyField(User, blank=True, related_name='user_follower')
+    picture = models.ImageField(upload_to=user_directory_path, default='profile_picture/default.png', blank=True, null=True)
+    following = models.ManyToManyField(User, blank=True, related_name='user_follower')
+    follower = models.ManyToManyField(User, blank=True, related_name='user_following')
 
     def __str__(self):
         return self.user_obj.username
+
+    # def get_following_counts(self):
+    #     return self.following.count()
+
+    # def get_follower_counts(self):
+    #     return self.follower.count()
 
     # def get_follower(self):
     #     return self.follower

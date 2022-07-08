@@ -155,7 +155,7 @@
                       </div>
   
                       <div class="post-saved-item">
-                        <form action="" method="post">
+                        <form action="{% url 'bookmark-post' post.pk %}" method="post">
                           {% csrf_token %}
 
                           <input type="hidden" name="next" value="{{ request.path }}">

@@ -32,20 +32,47 @@ class RegisterView(View):
 
         return render(request, 'accounts/register.html', context)
 
-class ProfileView(View):
+class ProfileView(LoginRequiredMixin, View):
     def get(self, request, user, *args, **kwargs):
 
+        requested_user_following = request.user.profile.following.all()
+
         user_profile = get_object_or_404(Profile, user_obj__username=user)
-        # print(user_profile)
         user_id = user_profile.user_obj.id
-        # print(user_id)
         user_post = Post.objects.filter(user__pk=user_id).order_by('-created_on')
         user_post_liked = Like.objects.filter(user__pk=user_id).order_by('-created_on')
 
         context = {
+            'requested_user_following': requested_user_following,
             'user_profile' : user_profile,
             'user_post' : user_post,
             'user_post_liked' : user_post_liked
         }
 
         return render(request, 'profile.html', context)
+
+class FollowSubmitView(LoginRequiredMixin, View):
+    def post(self, request, following_id, *args, **kwargs):
+
+        user= request.user
+        following_user_id = get_object_or_404(Profile, user_obj__id=following_id)
+        req_user_profile = user.profile
+
+        #Check whether the user1 already follow user2 
+        followed = Follow.objects.filter(follower=user, following=following_user_id.user_obj)
+
+        if following_user_id.user_obj in req_user_profile.following.all():
+            req_user_profile.following.remove(following_user_id.user_obj)
+        else:
+            req_user_profile.following.add(following_user_id.user_obj)
+        
+        if user.is_authenticated:
+            if not followed:
+                follow_obj = Follow.objects.create(follower=user, following=following_user_id.user_obj)
+            
+            if followed:
+                follow_obj = Follow.objects.filter(follower=user, following=following_user_id.user_obj)
+                follow_obj.delete()
+
+
+        return redirect('profile', user=following_user_id.user_obj.username)

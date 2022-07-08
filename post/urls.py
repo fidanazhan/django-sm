@@ -1,13 +1,17 @@
 from django.urls import path 
 from . views import (PostListView, PostDetailView, PostLikeView,
-                     CommentLikeView, PostShareView,
-                     CommentShareView, PostCommentView)
+                     PostCommentView, PostShareView, 
+
+                     CommentShareView, CommentLikeView, 
+                     CommentReplyView, CommentReplySubmitView,
+                     
+                     BookmarkView, BookmarkPostView, BookmarkCommentView)
 
 urlpatterns = [
     path('home/', PostListView.as_view(), name='post-list'),
     path('status/<str:user>/<uuid:pk>', PostDetailView.as_view(), name='post-detail'),
-    # path('status/<str:user>/<int:pk>/', CommentReplyView.as_view(), name='comment-detail'),
-    # path('i/bookmark/', BookmarkView.as_view(), name='bookmark-detail'),
+    path('status/<str:user>/<int:pk>/', CommentReplyView.as_view(), name='comment-detail'),
+    path('i/bookmark/', BookmarkView.as_view(), name='bookmark-detail'),
     # path('i/notification/', NotificationView.as_view(), name='notification-detail'),
 
     path('<uuid:pk>/post/like', PostLikeView.as_view(), name='post-like'),
@@ -17,10 +21,10 @@ urlpatterns = [
     path('<int:pk>/comment/share', CommentShareView.as_view(), name='comment-share'),
 
     path('<uuid:pk>/post/comment', PostCommentView.as_view(), name='post-comment-api'),
-    # path('<int:pk>/comment/reply', CommentReplySubmitView.as_view(), name='comment-reply'),
+    path('<int:pk>/comment/reply', CommentReplySubmitView.as_view(), name='comment-reply'),
 
-    # path('<uuid:pk>/post/bookmark', BookmarkPostView.as_view(), name='bookmark-post'),
-    # path('<int:pk>/comment/bookmark', BookmarkCommentView.as_view(), name='bookmark-comment'),
+    path('<uuid:pk>/post/bookmark', BookmarkPostView.as_view(), name='bookmark-post'),
+    path('<int:pk>/comment/bookmark', BookmarkCommentView.as_view(), name='bookmark-comment'),
 
 
     

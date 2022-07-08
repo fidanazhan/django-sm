@@ -59,6 +59,9 @@ class Comment(MediaStream, MPTTModel):
     def __str__(self):
         return self.commented_body
 
+    def get_comments(self):
+        return Comment.objects.filter(parent_comment=self).filter(active=True).count()
+        
     @property
     def get_child_comments(self):
         return Comment.objects.filter(parent_comment=self).order_by('-created_on')
@@ -95,3 +98,7 @@ class Share(MediaStream):
             liked_obj = self.shared_post
 
         return '%s - %s' % (liked_obj, self.user)
+
+class Bookmark(MediaStream):
+    bookmark_post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name = 'post_bookmark', null=True, blank=True)
+    bookmark_comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name = 'comment_bookmark', null=True, blank=True)

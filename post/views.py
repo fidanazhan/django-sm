@@ -9,15 +9,52 @@ from django.views import View
 
 from .forms import PostForm, CommentForm
 
-from . models import Post, Like, Comment, Share
+from . models import Post, Like, Comment, Share, Bookmark
+from accounts . models import Follow
 
 from itertools import chain
 
+
+# ------------------------- POSTS PART -------------------------
+# Go to 'home'. Display a list of posts (original post, liked post, shared post, comment post?). 
 class PostListView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
 
-        posts = Post.objects.all()
+        user = request.user
+
+        followers = Follow.objects.filter(follower=user)
+
+        following_list = []
+
+        for follower in followers:
+            following_list.append(follower.following)
+
+        user = request.user
+        #user_bookmark = Bookmark.objects.filter(user=user)
+        # # posts = user_bookmark.bookmark_post
+        # for post in user_bookmark:
+        #     print(post)
+
+        # Following's quack
+        following_posts = Post.objects.filter(user__username__in=following_list).all().order_by('-created_on')
+        
+        # Self quack
+        self_posts = Post.objects.filter(user=user).all().order_by('-created_on')
+
+        # Following reply quack
+        #following_reply_posts = Comment.objects.filter(user__username__in=following_list).all().order_by('-created_on')
+
+        posts_chain = list(chain(following_posts, self_posts))
+        posts = sorted(posts_chain, key=lambda instance: instance.created_on, reverse=True)
+
+        # result_1 = list(chain(following_posts, self_posts, following_reply_posts))
+        # posts_1 = sorted(result_1, key=lambda instance: instance.created_on)
+        # for post in posts1:
+        #     print(post)
+        # print(posts)
+    
         form = PostForm()
+
 
         context = {
             'posts' : posts,
@@ -39,6 +76,8 @@ class PostListView(LoginRequiredMixin, View):
 
         return redirect('post-list')
 
+# Go to 'post-detail'. Display a list comment according to the post.pk. The comment list is level 0. Focus on post.
+# Get Method 
 class PostDetailView(LoginRequiredMixin, View):
     def get(self, request, user, pk, *args, **kwargs):
 
@@ -53,7 +92,8 @@ class PostDetailView(LoginRequiredMixin, View):
         comment_counts_list = []
 
         for comment in comments:
-            comment_counts_list.append(comment.get_descendants().filter(level=1).count())
+            # comment_counts_list.insert(0, comment.get_descendants().filter(level=1).count())
+            comment_counts_list = [comment.get_descendants().filter(level=1).count()] + comment_counts_list
 
         mylist = zip(comment_list, comment_counts_list)
 
@@ -66,6 +106,7 @@ class PostDetailView(LoginRequiredMixin, View):
 
         return render(request, 'post_detail.html', context)
 
+# Comment a post. POST Method.
 class PostCommentView(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         post = Post.objects.get(pk=pk)
@@ -83,6 +124,7 @@ class PostCommentView(LoginRequiredMixin, View):
        
         return redirect('post-detail', user=post.user.username, pk=post_pk)
 
+# Like a post. POST Method.
 class PostLikeView(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
 
@@ -110,6 +152,7 @@ class PostLikeView(LoginRequiredMixin, View):
         print(next)
         return HttpResponseRedirect(next)
 
+# Share a post. POST Method.
 class PostShareView(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         
@@ -133,6 +176,8 @@ class PostShareView(LoginRequiredMixin, View):
         next = request.POST.get('next', '')
         return HttpResponseRedirect(next) 
 
+# ------------------------- COMMENTS PART -------------------------
+# Like a comment. POST Method.
 class CommentLikeView(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
 
@@ -157,6 +202,7 @@ class CommentLikeView(LoginRequiredMixin, View):
         print(next)
         return HttpResponseRedirect(next)
 
+# Share a comment. POST Method.
 class CommentShareView(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
 
@@ -183,11 +229,128 @@ class CommentShareView(LoginRequiredMixin, View):
         print(next)
         return HttpResponseRedirect(next) 
 
+# Go to 'comment-details'. Display a list of comment according to specific post. The comments list is +1 level. 
+# Focus on comment. GET Method.
+class CommentReplyView(LoginRequiredMixin, View):
+    def get(self, request, user, pk, *args, **kwargs):
+        
+        comment_form = CommentForm()
+
+        current_comment = Comment.objects.get(pk=pk)
+        post = Comment.objects.get(pk=pk).commented_post
+        level = Comment.objects.get(pk=pk).level
+
+        # Comment Ancestor
+        comments_ancestors = current_comment.get_ancestors()
+
+        # Comment Descendant
+        comments_descendant = current_comment.get_descendants().filter(level = level + 1)        
+        comment_list = list(comments_descendant)
+
+        # Comment Count 
+        comment_counts_list = []
+
+        for comment in comments_descendant:
+            comment_counts_list.append(comment.get_descendants().filter(level=1).count())
 
 
+        # Comment MyList
+        mylist = zip(comment_list, comment_counts_list)
 
+        context = {
+            'post' : post, 
+            'mylist' : mylist,
+            'comment_ancestors' : comments_ancestors,
+            'current_comment': current_comment,
+            'form' : comment_form
+        }
 
+        return render(request, 'comment_detail.html', context)
 
+# Reply to a comment. POST Method.
+class CommentReplySubmitView(LoginRequiredMixin, View):
+    def post(self, request, pk, *args, **kwargs):
+
+        current_comment = Comment.objects.get(pk=pk)
+        post = Comment.objects.get(pk=pk).commented_post
+
+        comment_form = CommentForm(request.POST)
+
+        if comment_form.is_valid():
+            new_comment_reply = comment_form.save(commit=False)
+            new_comment_reply.commented_post = post
+            new_comment_reply.parent = current_comment
+            new_comment_reply.user = request.user
+            new_comment_reply.save()
+            comment_form = CommentForm()
+
+        # return redirect('post-detail', pk=post.pk)
+        return redirect('comment-detail', user=current_comment.user.username, pk=current_comment.pk)
+
+# ------------------------- BOOKMARKS PART -------------------------
+# Go to 'bookmark'. Bookmark List View. GET Method.
+class BookmarkView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+
+        user = request.user
+        user_bookmark = Bookmark.objects.filter(user=user).order_by('-created_on')
+        print(user_bookmark)
+
+        context = {
+            'bookmark_list' : user_bookmark
+        }
+
+        return render(request, 'bookmark.html', context)
+
+# Bookmark A Post. POST Method.
+class BookmarkPostView(LoginRequiredMixin, View):
+    def post(self, request, pk, *args, **kwargs):
+
+        user = request.user
+        post = Post.objects.get(pk=pk)
+        bookmark = Bookmark.objects.filter(user=user, bookmark_post=post)
+
+        if user not in post.bookmark.all():
+            post.bookmark.add(user)
+        else:
+            post.bookmark.remove(user)
+
+        if user.is_authenticated:
+            if not bookmark:
+                liked_post = Bookmark.objects.create(user=user, bookmark_post=post)
+            
+            if bookmark:
+                liked_post = Bookmark.objects.filter(user=user, bookmark_post=post)
+                liked_post.delete()
+
+        next = request.POST.get('next', '')
+        print(next)
+        return HttpResponseRedirect(next)
+
+# Bookmark A Comment. POST Method.
+class BookmarkCommentView(LoginRequiredMixin, View):
+    def post(self, request, pk, *args, **kwargs):
+
+        user = request.user
+        comment = Comment.objects.get(pk=pk)
+        bookmark = Bookmark.objects.filter(user=user, bookmark_comment=comment)
+
+        if user not in comment.bookmark.all():
+            comment.bookmark.add(user)
+        else:
+            comment.bookmark.remove(user)
+
+        if user.is_authenticated:
+            if not bookmark:
+                bookmark_content = Bookmark.objects.create(user=user, bookmark_comment=comment)
+            
+            if bookmark:
+                bookmark_content = Bookmark.objects.filter(user=user, bookmark_comment=comment)
+                bookmark_content.delete()
+
+        next = request.POST.get('next', '')
+        print(next)
+        return HttpResponseRedirect(next)
 
 
 

@@ -56,10 +56,20 @@
                   </a>
                   {% if request.user == user_profile.user%}
 
-                  {% else %}
                   
-
-                 {% endif %}
+                  {% else %}
+                    <form action="{% url 'follow' user_profile.user_obj.pk %}" method="post">
+                      {% csrf_token %}
+                      <button type="submit" class="button-follow">
+                          {% if user_profile.user_obj not in requested_user_following %}
+                          <p>Follow</p>
+                          {% else %}
+                          <p>Following</p>
+                          {% endif %}
+                          <p></p>
+                      </button>
+                    </form>
+                  {% endif %}
                 </div>
 
                 <div class="profile-name">

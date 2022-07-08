@@ -2,7 +2,7 @@ from django.urls import path
 
 from django.contrib.auth.views import LogoutView
 
-from . views import CustomLoginView, RegisterView, ProfileView
+from . views import CustomLoginView, RegisterView, ProfileView, FollowSubmitView
 # FollowView, , ProfileView
 
 import os
@@ -15,7 +15,7 @@ urlpatterns = [
 
     path('<str:user>/', ProfileView.as_view(), name='profile'),
 
-    # path('<int:following_id>/follow', FollowView.as_view(), name='follow')
+    path('<int:following_id>/follow', FollowSubmitView.as_view(), name='follow')
 
    
 ]
