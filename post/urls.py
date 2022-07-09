@@ -5,14 +5,16 @@ from . views import (PostListView, PostDetailView, PostLikeView,
                      CommentShareView, CommentLikeView, 
                      CommentReplyView, CommentReplySubmitView,
                      
-                     BookmarkView, BookmarkPostView, BookmarkCommentView)
+                     BookmarkView, BookmarkPostView, BookmarkCommentView,
+                     
+                     NotificationView)
 
 urlpatterns = [
     path('home/', PostListView.as_view(), name='post-list'),
     path('status/<str:user>/<uuid:pk>', PostDetailView.as_view(), name='post-detail'),
     path('status/<str:user>/<int:pk>/', CommentReplyView.as_view(), name='comment-detail'),
     path('i/bookmark/', BookmarkView.as_view(), name='bookmark-detail'),
-    # path('i/notification/', NotificationView.as_view(), name='notification-detail'),
+    path('i/notification/', NotificationView.as_view(), name='notification-detail'),
 
     path('<uuid:pk>/post/like', PostLikeView.as_view(), name='post-like'),
     path('<int:pk>/comment/like', CommentLikeView.as_view(), name='comment-like'),

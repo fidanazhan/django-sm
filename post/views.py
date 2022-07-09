@@ -9,7 +9,7 @@ from django.views import View
 
 from .forms import PostForm, CommentForm
 
-from . models import Post, Like, Comment, Share, Bookmark
+from . models import Post, Like, Comment, Share, Bookmark, Notification
 from accounts . models import Follow
 
 from itertools import chain
@@ -113,7 +113,6 @@ class PostCommentView(LoginRequiredMixin, View):
         post_pk = post.pk
 
         comment_form = CommentForm(request.POST)
-        print(post_pk)
 
         if comment_form.is_valid():
             new_comment = comment_form.save(commit=False)
@@ -121,6 +120,12 @@ class PostCommentView(LoginRequiredMixin, View):
             new_comment.user = request.user
             new_comment.save()
             comment_form = CommentForm()
+
+        notification = Notification.objects.create(notification_types = 3, 
+                                                   notification_post = post,
+                                                    notification_comment = new_comment, 
+                                                    sender=request.user, 
+                                                    receiver=post.user)
        
         return redirect('post-detail', user=post.user.username, pk=post_pk)
 
@@ -143,13 +148,24 @@ class PostLikeView(LoginRequiredMixin, View):
         if user.is_authenticated:
             if not liked:
                 liked_post = Like.objects.create(user=user, liked_post=post)
+                notification = Notification.objects.create(notification_types = 1, 
+                                                    notification_post = post, 
+                                                    sender=request.user, 
+                                                    receiver=post.user)
             
             if liked:
                 liked_post = Like.objects.filter(user=user, liked_post=post)
                 liked_post.delete()
 
+                notification = Notification.objects.filter(notification_types = 1, 
+                                                    notification_post = post, 
+                                                    sender=request.user, 
+                                                    receiver=post.user)
+                notification.delete()
+
+
+
         next = request.POST.get('next', '')
-        print(next)
         return HttpResponseRedirect(next)
 
 # Share a post. POST Method.
@@ -168,13 +184,25 @@ class PostShareView(LoginRequiredMixin, View):
         if user.is_authenticated:
             if not shared:
                 shared_post = Share.objects.create(user=user, shared_post=post)
+                notification = Notification.objects.create(notification_types = 2, 
+                                                    notification_post = post, 
+                                                    sender=request.user, 
+                                                    receiver=post.user)
             
             if shared:
                 shared_post = Share.objects.filter(user=user, shared_post=post)
                 shared_post.delete()
 
+                notification = Notification.objects.filter(notification_types = 2, 
+                                                    notification_post = post, 
+                                                    sender=request.user, 
+                                                    receiver=post.user)
+                notification.delete()
+
         next = request.POST.get('next', '')
         return HttpResponseRedirect(next) 
+
+
 
 # ------------------------- COMMENTS PART -------------------------
 # Like a comment. POST Method.
@@ -193,10 +221,20 @@ class CommentLikeView(LoginRequiredMixin, View):
         if user.is_authenticated:
             if not liked:
                 liked_comment = Like.objects.create(user=user, liked_comment=comment)
+                notification = Notification.objects.create(notification_types = 1, 
+                                                    notification_comment = comment, 
+                                                    sender=request.user, 
+                                                    receiver=comment.user)
             
             if liked:
                 liked_comment = Like.objects.filter(user=user, liked_comment=comment)
                 liked_comment.delete()
+
+                notification = Notification.objects.filter(notification_types = 1, 
+                                                    notification_comment = comment, 
+                                                    sender=request.user, 
+                                                    receiver=comment.user)
+                notification.delete()
 
         next = request.POST.get('next', '')
         print(next)
@@ -220,10 +258,20 @@ class CommentShareView(LoginRequiredMixin, View):
         if user.is_authenticated:
             if not shared:
                 shared_comment = Share.objects.create(user=user, shared_comment=comment)
+                notification = Notification.objects.create(notification_types = 2, 
+                                                    notification_comment = comment, 
+                                                    sender=request.user, 
+                                                    receiver=comment.user)
             
             if shared:
                 shared_comment = Share.objects.filter(user=user, shared_comment=comment)
                 shared_comment.delete()
+
+                notification = Notification.objects.filter(notification_types = 2, 
+                                                    notification_comment = comment, 
+                                                    sender=request.user, 
+                                                    receiver=comment.user)
+                notification.delete()
 
         next = request.POST.get('next', '')
         print(next)
@@ -284,8 +332,15 @@ class CommentReplySubmitView(LoginRequiredMixin, View):
             new_comment_reply.save()
             comment_form = CommentForm()
 
+        notification = Notification.objects.create(notification_types = 4, 
+                                                    notification_comment = new_comment_reply, 
+                                                    sender=request.user, 
+                                                    receiver=current_comment.user)
+
         # return redirect('post-detail', pk=post.pk)
         return redirect('comment-detail', user=current_comment.user.username, pk=current_comment.pk)
+
+
 
 # ------------------------- BOOKMARKS PART -------------------------
 # Go to 'bookmark'. Bookmark List View. GET Method.
@@ -353,6 +408,19 @@ class BookmarkCommentView(LoginRequiredMixin, View):
         return HttpResponseRedirect(next)
 
 
+
+# ------------------------- NOTIFICATION PART -------------------------
+# Go to ' notification'. Notification list. GET Method
+class NotificationView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        notification = Notification.objects.filter(receiver=user).order_by('-created_on')
+
+        context = {
+            'notifications' : notification
+        }
+
+        return render(request, 'notification.html', context)
 
 
 

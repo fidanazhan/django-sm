@@ -1,0 +1,690 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% load class_name %}
+{% load upto %}
+
+{% load mptt_tags %}
+
+
+{% block title %}Notification {% endblock %}
+
+{% block content %}
+    
+<section class="main"> 
+    <div class="main-header">
+        <div class="toggle-header">
+            <button onclick="openLeftSidebar()">
+                <i class="bx bx-menu" id="header-toggle"></i>
+            </button>
+        </div>
+        Notification
+        <div class="image-header">
+        <p class="image image-header-size">
+            <img class="image-circle" src="https://bulma.io/images/placeholders/128x128.png">
+        </p>
+        </div>
+    </div>
+    <div class="main-body">
+            <div class="pad-t">  
+            .              
+            </div>
+            <hr class="hr-1">
+
+            {% for notification in notifications %}
+            {% if request.user != notification.sender%}
+                  {% if notification.notification_types == 1 %}
+
+                  <div class="post-feed">
+                      <p class="notification-type-sentences"><a class="notification-sender-link" href="{% url 'profile' notification.sender %}">{{notification.sender}}</a> has liked your post.</p>
+                      <div class="post-inner">
+
+
+                        <div class="post-content" id="post-{{post.pk}}">
+                          <div class="post-content-header">
+                            <div class="left-post-content-header">
+
+                              {% if notification.notification_post != None %}
+                                <span class="post-pro-pic">
+                                  {% if notification.notification_post.user.profile.picture %}
+                                    <a href="{% url 'profile' notification.notification_post.user.username %}">
+                                      <img class="post-image-circle" src="{{ notification.notification_post.user.profile.picture.url }}" alt="">
+                                    </a>
+                                  {% endif %}
+                                </span>
+                                <a href="{% url 'profile' notification.notification_post.user.username %}" class="pro-name">@{{ notification.notification_post.user.username }}</a> 
+                                <span class="post-time">{{ notification.notification_post.created_on|timesince|upto:',' }}</span> 
+                              {% else %}
+                                <span class="post-pro-pic">
+                                  {% if notification.notification_comment.user.profile.picture %}
+                                    <a href="{% url 'profile' notification.notification_comment.user.username %}">
+                                      <img class="post-image-circle" src="{{ notification.notification_comment.user.profile.picture.url }}" alt="">
+                                    </a>
+                                  {% endif %}
+                                </span>
+                                <a href="{% url 'profile' notification.notification_comment.user.username %}" class="pro-name">@{{ notification.notification_comment.user.username }}</a> 
+                                <span class="post-time">{{ notification.notification_comment.created_on|timesince|upto:',' }}</span> 
+                              {% endif %}                          
+                          </div>
+                            <div class="right-post-content-header">
+                              <span class="post-ellipsis"><i class="fa fa-ellipsis-h"></i></span>
+                            </div>
+                          </div>
+                          <div class="post-content-body">
+                              {% if notification.notification_post != None %}
+                                  <p class="comment-body">{{notification.notification_post.post_body}}</p>
+                              {% else %}
+                                  <p class="comment-reply-to-p">replying to<a href="" class="comment-reply-to-a"> @{{notification.notification_comment.parent.user.username }}</a></p>
+                                  <p class="comment-body">{{notification.notification_comment.commented_body}}</p>
+                              {% endif %}
+                          </div>
+                          <div class="post-content-footer">
+                              <div class="reply-icon">
+                                <button>
+
+                                  {% if notification.notification_post != None %}
+                                  <a class="fa fa-reply" href="{% url 'post-detail' notification.notification_post.user.username notification.notification_post.pk %}"></a>
+                                  {% else %}
+                                  <a class="fa fa-reply" href="{% url 'comment-detail' notification.notification_comment.user.username notification.notification_comment.pk %}"></a>
+                                  {% endif %}
+
+
+                                  {% if notification.notification_post.get_comments.count != 0 %}
+                                  <span><i class="number-of-reaction"> {{notification.notification_post.get_comments.count}}</i></span>
+                                  {% else %}
+                                  <span> <i></i></span>
+                                  {% endif %}
+                                </button>
+                              </div>
+          
+                              <div class="retweet-icon">
+                                  {% if notification.notification_post != None %}
+                                      <form action="{% url 'post-share' notification.notification_post.pk %}" method="post">
+                                          {% csrf_token %}
+              
+                                          <input type="hidden" name="next" value="{{ request.path }}">
+              
+                                          <button type="submit">
+                                              {% if request.user in notification.notification_post.shares.all %}
+                                              <span class="icon is-small"><i class="fa fa-retweet green"></i></span>
+              
+                                              {% else %}
+                                              <span class="icon is-small"><i class="fa fa-retweet" id="heart-toggle"></i></span>
+              
+                                              {% endif %}
+                                              <i class="number-of-reaction">{{ notification.notification_post.shares.all.count }}</i>
+                                          </button>
+                                      </form>
+                                  {% else %}
+                                      <form action="{% url 'comment-share' notification.notification_comment.pk %}" method="post">
+                                          {% csrf_token %}
+              
+                                          <input type="hidden" name="next" value="{{ request.path }}">
+              
+                                          <button type="submit">
+                                              {% if request.user in notification.notification_comment.shares.all %}
+                                              <span class="icon is-small"><i class="fa fa-retweet green"></i></span>
+              
+                                              {% else %}
+                                              <span class="icon is-small"><i class="fa fa-retweet" id="heart-toggle"></i></span>
+              
+                                              {% endif %}
+                                              <i class="number-of-reaction">{{ notification.notification_comment.shares.all.count }}</i>
+                                          </button>
+                                      </form>
+
+                                  {% endif %}
+                              </div>                        
+          
+                              <div class="heart-icon">
+                                  {% if notification.notification_post != None %}
+                                    <form action="{% url 'post-like' notification.notification_post.pk %}" method="post">
+                                      {% csrf_token %}
+              
+                                      <input type="hidden" name="next" value="{{ request.path }}">
+                                      
+              
+                                      <button type="submit">    
+            
+                                          {% if request.user in  notification.notification_post.likes.all %}
+                                            <span class="icon is-small"><i class="fa fa-heart red" id="heart-toggle"></i></span>
+            
+                                          {% else %}
+                                            <span class="icon is-small"><i class="fa fa-regular fa-heart" id="heart-toggle"></i></span>
+            
+                                          {% endif %}
+                                          <i class="number-of-reaction">{{ notification.notification_post.likes.count }}</i>
+            
+                                      </button>
+                  
+                                    </form>
+                                  {% else %}
+                                    <form action="{% url 'comment-like' notification.notification_comment.pk %}" method="post">
+                                      {% csrf_token %}
+              
+                                      <input type="hidden" name="next" value="{{ request.path }}">
+                                      
+              
+                                      <button type="submit">    
+            
+                                          {% if request.user in  notification.notification_comment.likes.all %}
+                                            <span class="icon is-small"><i class="fa fa-heart red" id="heart-toggle"></i></span>
+            
+                                          {% else %}
+                                            <span class="icon is-small"><i class="fa fa-regular fa-heart" id="heart-toggle"></i></span>
+            
+                                          {% endif %}
+                                          <i class="number-of-reaction">{{ notification.notification_comment.likes.count }}</i>
+            
+                                      </button>
+                  
+                                    </form>                                
+                                  {% endif %}
+                                    
+                              </div>
+          
+                              <div class="post-saved-item">
+                                  {% if notification.notification_post != None %}
+                                      <form action="{% url 'bookmark-post' notification.notification_post.pk %}" method="post">
+                                          {% csrf_token %}
+              
+                                          <input type="hidden" name="next" value="{{ request.path }}">
+                                          
+              
+                                          <button type="submit">    
+              
+                                              {% if request.user in notification.notification_post.notification.all %}
+                                              <span class="icon is-small"><i class="fa fa-notification" id="heart-toggle"></i></span>
+              
+                                              {% else %}
+                                              <span class="icon is-small"><i class="fa fa-regular fa-notification" id="heart-toggle"></i></span>
+              
+                                              {% endif %}
+                                          </button>
+              
+                                      </form>
+                                  {% else %}
+                                      <form action="{% url 'bookmark-comment' notification.notification_comment.pk %}" method="post">
+                                          {% csrf_token %}
+              
+                                          <input type="hidden" name="next" value="{{ request.path }}">
+                                          
+              
+                                          <button type="submit">    
+              
+                                              {% if request.user in notification.notification_comment.notification.all %}
+                                              <span class="icon is-small"><i class="fa fa-notification" id="heart-toggle"></i></span>
+              
+                                              {% else %}
+                                              <span class="icon is-small"><i class="fa fa-regular fa-notification" id="heart-toggle"></i></span>
+              
+                                              {% endif %}
+                                          </button>
+              
+                                      </form>
+                                  {% endif %}
+                              </div>
+                          </div>
+          
+                        </div>
+                      </div>
+
+                      {% if notification.notification_post != None %}
+                      <a class="post-link" href="{% url 'post-detail' notification.notification_post.user.username notification.notification_post.pk %}"></a>
+                      {% else %}
+                      <a class="post-link" href="{% url 'comment-detail' notification.notification_comment.user.username notification.notification_comment.pk %}"></a>
+                      {% endif %}
+
+                  </div>
+
+                  <hr class="hr-1">
+
+                  {% endif %}
+                  {% if notification.notification_types == 2 %}
+                  
+                  <div class="post-feed">
+                      <p class="notification-type-sentences"><a class="notification-sender-link" href="{% url 'profile' notification.sender %}">{{notification.sender}}</a> has requack your quack.</p>
+                      
+                      <div class="post-inner">
+                        
+                        <div class="post-content" id="post-{{post.pk}}">
+                          <div class="post-content-header">
+                            <div class="left-post-content-header">
+
+                              {% if notification.notification_post != None %}
+                                  <span class="post-pro-pic">
+                                    {% if notification.notification_post.user.profile.picture %}
+                                      <a href="{% url 'profile' notification.notification_post.user.username %}">
+                                        <img class="post-image-circle" src="{{ notification.notification_post.user.profile.picture.url }}" alt="">
+                                      </a>
+                                    {% endif %}
+                                  </span>
+                                  <a href="{% url 'profile' notification.notification_post.user.username %}" class="pro-name">@{{ notification.notification_post.user.username }}</a> 
+                                  <span class="post-time">{{ notification.notification_post.created_on|timesince|upto:',' }}</span> 
+                              {% else %}
+                                  <span class="post-pro-pic">
+                                    {% if notification.notification_comment.user.profile.picture %}
+                                      <a href="{% url 'profile' notification.notification_comment.user.username %}">
+                                        <img class="post-image-circle" src="{{ notification.notification_comment.user.profile.picture.url }}" alt="">
+                                      </a>
+                                    {% endif %}
+                                  </span>
+                                  <a href="{% url 'profile' notification.notification_comment.user.username %}" class="pro-name">@{{ notification.notification_comment.user.username }}</a> 
+                                  <span class="post-time">{{ notification.notification_comment.created_on|timesince|upto:',' }}</span> 
+                              {% endif %}                          
+                          </div>
+                            <div class="right-post-content-header">
+                              <span class="post-ellipsis"><i class="fa fa-ellipsis-h"></i></span>
+                            </div>
+                          </div>
+                          <div class="post-content-body">
+                              {% if notification.notification_post != None %}
+                                  <p class="comment-body">{{notification.notification_post.post_body}}</p>
+                              {% else %}
+                                  <p class="comment-reply-to-p">replying to<a href="" class="comment-reply-to-a"> @{{notification.notification_comment.parent.user.username }}</a></p>
+                                  <p class="comment-body">{{notification.notification_comment.commented_body}}</p>
+                              {% endif %}
+                          </div>
+                          <div class="post-content-footer">
+                              <div class="reply-icon">
+                                <button>
+
+                                  {% if notification.notification_post != None %}
+                                  <a class="fa fa-reply" href="{% url 'post-detail' notification.notification_post.user.username notification.notification_post.pk %}"></a>
+                                  {% else %}
+                                  <a class="fa fa-reply" href="{% url 'comment-detail' notification.notification_comment.user.username notification.notification_comment.pk %}"></a>
+                                  {% endif %}
+
+
+                                  {% if notification.notification_post.get_comments.count != 0 %}
+                                  <span><i class="number-of-reaction"> {{notification.notification_post.get_comments.count}}</i></span>
+                                  {% else %}
+                                  <span> <i></i></span>
+                                  {% endif %}
+                                </button>
+                              </div>
+          
+                              <div class="retweet-icon">
+                                  {% if notification.notification_post != None %}
+                                      <form action="{% url 'post-share' notification.notification_post.pk %}" method="post">
+                                          {% csrf_token %}
+              
+                                          <input type="hidden" name="next" value="{{ request.path }}">
+              
+                                          <button type="submit">
+                                              {% if request.user in notification.notification_post.shares.all %}
+                                              <span class="icon is-small"><i class="fa fa-retweet green"></i></span>
+              
+                                              {% else %}
+                                              <span class="icon is-small"><i class="fa fa-retweet" id="heart-toggle"></i></span>
+              
+                                              {% endif %}
+                                              <i class="number-of-reaction">{{ notification.notification_post.shares.all.count }}</i>
+                                          </button>
+                                      </form>
+                                  {% else %}
+                                      <form action="{% url 'comment-share' notification.notification_comment.pk %}" method="post">
+                                          {% csrf_token %}
+              
+                                          <input type="hidden" name="next" value="{{ request.path }}">
+              
+                                          <button type="submit">
+                                              {% if request.user in notification.notification_comment.shares.all %}
+                                              <span class="icon is-small"><i class="fa fa-retweet green"></i></span>
+              
+                                              {% else %}
+                                              <span class="icon is-small"><i class="fa fa-retweet" id="heart-toggle"></i></span>
+              
+                                              {% endif %}
+                                              <i class="number-of-reaction">{{ notification.notification_comment.shares.all.count }}</i>
+                                          </button>
+                                      </form>
+
+                                  {% endif %}
+                              </div>                        
+          
+                              <div class="heart-icon">
+                                  {% if notification.notification_post != None %}
+                                    <form action="{% url 'post-like' notification.notification_post.pk %}" method="post">
+                                      {% csrf_token %}
+              
+                                      <input type="hidden" name="next" value="{{ request.path }}">
+                                      
+              
+                                      <button type="submit">    
+            
+                                          {% if request.user in  notification.notification_post.likes.all %}
+                                            <span class="icon is-small"><i class="fa fa-heart red" id="heart-toggle"></i></span>
+            
+                                          {% else %}
+                                            <span class="icon is-small"><i class="fa fa-regular fa-heart" id="heart-toggle"></i></span>
+            
+                                          {% endif %}
+                                          <i class="number-of-reaction">{{ notification.notification_post.likes.count }}</i>
+            
+                                      </button>
+                  
+                                    </form>
+                                  {% else %}
+                                    <form action="{% url 'comment-like' notification.notification_comment.pk %}" method="post">
+                                      {% csrf_token %}
+              
+                                      <input type="hidden" name="next" value="{{ request.path }}">
+                                      
+              
+                                      <button type="submit">    
+            
+                                          {% if request.user in  notification.notification_comment.likes.all %}
+                                            <span class="icon is-small"><i class="fa fa-heart red" id="heart-toggle"></i></span>
+            
+                                          {% else %}
+                                            <span class="icon is-small"><i class="fa fa-regular fa-heart" id="heart-toggle"></i></span>
+            
+                                          {% endif %}
+                                          <i class="number-of-reaction">{{ notification.notification_comment.likes.count }}</i>
+            
+                                      </button>
+                  
+                                    </form>                                
+                                  {% endif %}
+                                    
+                              </div>
+          
+                              <div class="post-saved-item">
+                                  {% if notification.notification_post != None %}
+                                      <form action="{% url 'bookmark-post' notification.notification_post.pk %}" method="post">
+                                          {% csrf_token %}
+              
+                                          <input type="hidden" name="next" value="{{ request.path }}">
+                                          
+              
+                                          <button type="submit">    
+              
+                                              {% if request.user in notification.notification_post.notification.all %}
+                                              <span class="icon is-small"><i class="fa fa-notification" id="heart-toggle"></i></span>
+              
+                                              {% else %}
+                                              <span class="icon is-small"><i class="fa fa-regular fa-notification" id="heart-toggle"></i></span>
+              
+                                              {% endif %}
+                                          </button>
+              
+                                      </form>
+                                  {% else %}
+                                      <form action="{% url 'bookmark-comment' notification.notification_comment.pk %}" method="post">
+                                          {% csrf_token %}
+              
+                                          <input type="hidden" name="next" value="{{ request.path }}">
+                                          
+              
+                                          <button type="submit">    
+              
+                                              {% if request.user in notification.notification_comment.notification.all %}
+                                              <span class="icon is-small"><i class="fa fa-notification" id="heart-toggle"></i></span>
+              
+                                              {% else %}
+                                              <span class="icon is-small"><i class="fa fa-regular fa-notification" id="heart-toggle"></i></span>
+              
+                                              {% endif %}
+                                          </button>
+              
+                                      </form>
+                                  {% endif %}
+                              </div>
+                          </div>
+          
+                        </div>
+                      </div>
+
+                      {% if notification.notification_post != None %}
+                      <a class="post-link" href="{% url 'post-detail' notification.notification_post.user.username notification.notification_post.pk %}"></a>
+                      {% else %}
+                      <a class="post-link" href="{% url 'comment-detail' notification.notification_comment.user.username notification.notification_comment.pk %}"></a>
+                      {% endif %}
+
+                  </div>
+                      
+                  <hr  class="hr-1">
+                  
+                  {% endif %}
+
+                  {% if notification.notification_types ==  3 %}
+                      {% if notification.notification_comment != None %}
+
+                        <div class="notification-post">
+                          <div class="post-feed">
+                            <p class="notification-type-sentences"><a class="notification-sender-link" href="{% url 'profile' notification.sender %}">{{notification.sender}}</a> has commented on your quack.</p>
+                            
+                            <div class="post-inner">
+                              
+                              <div class="post-content" id="post-{{post.pk}}">
+                                <div class="post-content-header">
+                                  <div class="left-post-content-header">
+
+                                        <span class="post-pro-pic">
+                                          {% if notification.notification_comment.user.profile.picture %}
+                                            <a href="{% url 'profile' notification.notification_comment.user.username %}">
+                                              <img class="post-image-circle" src="{{ notification.notification_comment.user.profile.picture.url }}" alt="">
+                                            </a>
+                                          {% endif %}
+                                        </span>
+                                        <a href="{% url 'profile' notification.notification_comment.user.username %}" class="pro-name">@{{ notification.notification_comment.user.username }}</a> 
+                                        <span class="post-time">{{ notification.notification_comment.created_on|timesince|upto:',' }}</span> 
+                                </div>
+                                  <div class="right-post-content-header">
+                                    <span class="post-ellipsis"><i class="fa fa-ellipsis-h"></i></span>
+                                  </div>
+                                </div>
+                                <div class="post-content-body">
+                                        <p class="comment-reply-to-p">replying to<a href="" class="comment-reply-to-a"> @{{notification.notification_comment.commented_post.user.username }}</a></p>
+                                        <p class="comment-body">{{notification.notification_comment.commented_body}}</p>
+                                </div>
+                                <div class="post-content-footer">
+                                    <div class="reply-icon">
+                                      <button>
+
+                                        <a class="fa fa-reply" href="{% url 'comment-detail' notification.notification_comment.user.username notification.notification_comment.pk %}"></a>
+                                        <span><i class="number-of-reaction"> {{notification.notification_comment.get_children.count}}</i></span>
+                                      </button>
+                                    </div>
+                
+                                    <div class="retweet-icon">
+                                        <form action="{% url 'comment-share' notification.notification_comment.pk %}" method="post">
+                                            {% csrf_token %}
+                
+                                            <input type="hidden" name="next" value="{{ request.path }}">
+                
+                                            <button type="submit">
+                                                {% if request.user in notification.notification_comment.shares.all %}
+                                                <span class="icon is-small"><i class="fa fa-retweet green"></i></span>
+                
+                                                {% else %}
+                                                <span class="icon is-small"><i class="fa fa-retweet" id="heart-toggle"></i></span>
+                
+                                                {% endif %}
+                                                <i class="number-of-reaction">{{ notification.notification_comment.shares.count }}</i>
+                                            </button>
+                                        </form>
+                                    </div>                        
+                
+                                    <div class="heart-icon">
+                                        <form action="{% url 'comment-like' notification.notification_comment.pk %}" method="post">
+                                          {% csrf_token %}
+                  
+                                          <input type="hidden" name="next" value="{{ request.path }}">
+                  
+                                          <button type="submit">    
+                
+                                              {% if request.user in  notification.notification_comment.likes.all %}
+                                                <span class="icon is-small"><i class="fa fa-heart red" id="heart-toggle"></i></span>
+                
+                                              {% else %}
+                                                <span class="icon is-small"><i class="fa fa-regular fa-heart" id="heart-toggle"></i></span>
+                
+                                              {% endif %}
+                                              <i class="number-of-reaction">{{ notification.notification_comment.likes.count }}</i>
+                                          </button>
+                                        </form>                                                                          
+                                    </div>
+                
+                                    <div class="post-saved-item">
+                                        <form action="{% url 'bookmark-comment' notification.notification_comment.pk %}" method="post">
+                                            {% csrf_token %}
+                
+                                            <input type="hidden" name="next" value="{{ request.path }}">
+                                            
+                
+                                            <button type="submit">    
+                
+                                                {% if request.user in notification.notification_comment.notification.all %}
+                                                <span class="icon is-small"><i class="fa fa-notification" id="heart-toggle"></i></span>
+                
+                                                {% else %}
+                                                <span class="icon is-small"><i class="fa fa-regular fa-notification" id="heart-toggle"></i></span>
+                
+                                                {% endif %}
+                                            </button>
+                
+                                        </form>
+                                    </div>
+                                </div>
+                
+                              </div>
+                            </div>
+                            <a class="post-link" href="{% url 'comment-detail' notification.notification_comment.user.username notification.notification_comment.pk %}"></a>
+                          </div>
+                        </div>
+                      {% endif %}
+                    
+                  <hr  class="hr-1">
+                  {% endif %}
+
+                  {% if notification.notification_types ==  4 %}
+                      {% if notification.notification_comment != None %}
+
+                        <div class="notification-post">
+                          <div class="post-feed">
+                            <p class="notification-type-sentences"><a class="notification-sender-link" href="{% url 'profile' notification.sender %}">{{notification.sender}}</a> has replied on your comment.</p>
+                            
+                            <div class="post-inner">
+                              
+                              <div class="post-content" id="post-{{post.pk}}">
+                                <div class="post-content-header">
+                                  <div class="left-post-content-header">
+
+                                        <span class="post-pro-pic">
+                                          {% if notification.notification_comment.user.profile.picture %}
+                                            <a href="{% url 'profile' notification.notification_comment.user.username %}">
+                                              <img class="post-image-circle" src="{{ notification.notification_comment.user.profile.picture.url }}" alt="">
+                                            </a>
+                                          {% endif %}
+                                        </span>
+                                        <a href="{% url 'profile' notification.notification_comment.user.username %}" class="pro-name">@{{ notification.notification_comment.user.username }}</a> 
+                                        <span class="post-time">{{ notification.notification_comment.created_on|timesince|upto:',' }}</span> 
+                                </div>
+                                  <div class="right-post-content-header">
+                                    <span class="post-ellipsis"><i class="fa fa-ellipsis-h"></i></span>
+                                  </div>
+                                </div>
+                                <div class="post-content-body">
+                                        <p class="comment-reply-to-p">replying to<a href="" class="comment-reply-to-a"> @{{notification.notification_comment.parent.user.username }}</a></p>
+                                        <p class="comment-body">{{notification.notification_comment.commented_body}}</p>
+                                </div>
+                                <div class="post-content-footer">
+                                    <div class="reply-icon">
+                                      <button>
+
+                                        <a class="fa fa-reply" href="{% url 'comment-detail' notification.notification_comment.user.username notification.notification_comment.pk %}"></a>
+                                        <span><i class="number-of-reaction"> {{notification.notification_comment.get_children.count}}</i></span>
+                                      </button>
+                                    </div>
+                
+                                    <div class="retweet-icon">
+                                        <form action="{% url 'comment-share' notification.notification_comment.pk %}" method="post">
+                                            {% csrf_token %}
+                
+                                            <input type="hidden" name="next" value="{{ request.path }}">
+                
+                                            <button type="submit">
+                                                {% if request.user in notification.notification_comment.shares.all %}
+                                                <span class="icon is-small"><i class="fa fa-retweet green"></i></span>
+                
+                                                {% else %}
+                                                <span class="icon is-small"><i class="fa fa-retweet" id="heart-toggle"></i></span>
+                
+                                                {% endif %}
+                                                <i class="number-of-reaction">{{ notification.notification_comment.shares.count }}</i>
+                                            </button>
+                                        </form>
+                                    </div>                        
+                
+                                    <div class="heart-icon">
+                                        <form action="{% url 'comment-like' notification.notification_comment.pk %}" method="post">
+                                          {% csrf_token %}
+                  
+                                          <input type="hidden" name="next" value="{{ request.path }}">
+                  
+                                          <button type="submit">    
+                
+                                              {% if request.user in  notification.notification_comment.likes.all %}
+                                                <span class="icon is-small"><i class="fa fa-heart red" id="heart-toggle"></i></span>
+                
+                                              {% else %}
+                                                <span class="icon is-small"><i class="fa fa-regular fa-heart" id="heart-toggle"></i></span>
+                
+                                              {% endif %}
+                                              <i class="number-of-reaction">{{ notification.notification_comment.likes.count }}</i>
+                                          </button>
+                                        </form>                                                                          
+                                    </div>
+                
+                                    <div class="post-saved-item">
+                                        <form action="{% url 'bookmark-comment' notification.notification_comment.pk %}" method="post">
+                                            {% csrf_token %}
+                
+                                            <input type="hidden" name="next" value="{{ request.path }}">
+                                            
+                
+                                            <button type="submit">    
+                
+                                                {% if request.user in notification.notification_comment.notification.all %}
+                                                <span class="icon is-small"><i class="fa fa-notification" id="heart-toggle"></i></span>
+                
+                                                {% else %}
+                                                <span class="icon is-small"><i class="fa fa-regular fa-notification" id="heart-toggle"></i></span>
+                
+                                                {% endif %}
+                                            </button>
+                
+                                        </form>
+                                    </div>
+                                </div>
+                
+                              </div>
+                            </div>
+                            <a class="post-link" href="{% url 'comment-detail' notification.notification_comment.user.username notification.notification_comment.pk %}"></a>
+                          </div>
+                        </div>
+                      {% endif %}
+                    
+                  <hr  class="hr-1">
+                  {% endif %}
+
+                  {% if notification.notification_types ==  5 %}
+                  <p>{{notification.sender}} has followed you</p>
+                  {% endif %}
+            
+            {% endif %}
+
+
+            {% endfor %}
+
+
+
+
+            
+    </div>
+</section>
+
+{% endblock %}

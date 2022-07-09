@@ -59,20 +59,21 @@ class Comment(MediaStream, MPTTModel):
     def __str__(self):
         return self.commented_body
 
-    def get_comments(self):
-        return Comment.objects.filter(parent_comment=self).filter(active=True).count()
-        
-    @property
-    def get_child_comments(self):
-        return Comment.objects.filter(parent_comment=self).order_by('-created_on')
+    def get_children(self):
+        return Comment.objects.filter(parent=self)
 
-    @property
-    def get_parent_comment(self):
-        if self.parent_comment is None:
-            return True
-        else:
-            return None
+class Notification(models.Model):
+    NOTIFICATION_TYPES = ((1, 'Like'), (2, 'Share'), (3, 'PostComment'), (4, 'CommentReply'), (5, 'Follow'))
 
+    notification_post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name = 'post_notification', null=True, blank=True)
+    notification_comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name = 'comment_notification', null=True, blank=True)
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'noti_from_user')
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'noti_to_user')
+    notification_types = models.IntegerField(choices = NOTIFICATION_TYPES)
+    text_preview = models.CharField(max_length=30, blank=True, null=True)
+    is_seen = models.BooleanField(default=False)
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateField(auto_now=True)
 
 class Like(MediaStream):
     liked_post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name = 'post_liked', null=True, blank=True)
