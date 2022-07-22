@@ -51,8 +51,29 @@
                           <span class="post-time">{{ post.created_on|timesince|upto:',' }}</span> 
                         </div>
                         <div class="right-post-content-header">
-                          <span class="post-ellipsis" onclick="postEllipsisButton()"><i class="fa fa-ellipsis-h"></i></span>
-                          <div class="post-ellipsis-content-edit" id="postEllipsis">Content Edit</div>
+                          {% if post.user == request.user %}
+                          <button class="edit-button">
+                            <a href="{% url 'post-edit' post.user.username post.pk %}"><i class="fas fa-edit"></i><span>Edit</span></a>
+                          </button>
+                          <button class="delete-button">
+                            <a href="{% url 'post-delete' post.user.username post.pk %}"><i class="fa-solid fa-trash"></i><span>Delete</span></a>
+                          </button>
+                          {% else %}
+                          <form action="{% url 'follow' post.user.pk %}" method="post">
+                            {% csrf_token %}
+                            <button class="follow-button">
+    
+                              <input type="hidden" name="next" value="{{ request.path }}">
+    
+                              {% if post.user not in request.user.profile.following.all %}
+                              <i class="fas fa-user"></i>Follow
+                              {% else %}
+                              <i class="fas fa-user"></i>Following
+                              {% endif %}
+                              
+                            </button>
+                          </form>
+                          {% endif %}
                         </div>
                     </div>
                     <div class="post-content-body">
@@ -64,19 +85,30 @@
                             <a href="" class="icon is-small"><i class="fa fa-reply"></i></a>
                           </button>
 
-                          {% if comments_level_1_count != 0 %}
-                                <i class="number-of-reaction">{{ comments_level_1_count }}</i>
+                          {% if post.get_comments.count != 0 %}
+                                <i class="number-of-reaction">{{ post.get_comments.count }}</i>
                           {% else %}
                                 <i class="zero-number-of reaction"></i>
                           {% endif %}
                         </div>
     
                         <div class="retweet-icon">
-                          <form action="" method="post">
-                              <button type="submit">
-                                <span class="icon is-small"><i class="fa fa-retweet"></i></span>
-                              </button>
-                          </form>
+                          <form action="{% url 'post-share' post.pk %}" method="post">
+                            {% csrf_token %}
+
+                            <input type="hidden" name="next" value="{{ request.path }}">
+
+                            <button type="submit">
+                              {% if request.user in post.shares.all %}
+                              <span class="icon is-small"><i class="fa fa-retweet green"></i></span>
+
+                              {% else %}
+                              <span class="icon is-small"><i class="fa fa-retweet" id="heart-toggle"></i></span>
+
+                              {% endif %}
+                              <i class="number-of-reaction">{{ post.shares.all.count }}</i>
+                            </button>
+                        </form>
                         </div>
                         
     
@@ -139,10 +171,28 @@
                                 {% endif %}
                               </span>
                               <a href="{% url 'profile' comment_ancestor.user.username %}" class="pro-name">@{{ comment_ancestor.user.username }}</a> 
-                              <span class="post-time">{{ post.created_on|timesince|upto:',' }}</span> 
+                              <span class="post-time">{{ comment_ancestor.created_on|timesince|upto:',' }}</span> 
                             </div>
                             <div class="right-post-content-header">
-                              <span class="post-ellipsis"><i class="fa fa-ellipsis-h"></i></span>
+                              {% if comment_ancestor.user == request.user %}
+                              <span class="self-post-reminder">You write this</span>
+
+                              {% else %}
+                              <form action="{% url 'follow' comment_ancestor.user.pk %}" method="post">
+                                {% csrf_token %}
+                                <button class="follow-button">
+        
+                                  <input type="hidden" name="next" value="{{ request.path }}">
+        
+                                  {% if comment_ancestor.user not in request.user.profile.following.all %}
+                                  <i class="fas fa-user"></i>Follow
+                                  {% else %}
+                                  <i class="fas fa-user"></i>Following
+                                  {% endif %}
+                                  
+                                </button>
+                              </form>
+                              {% endif %}
                             </div>
                           </div>
                           <div class="post-content-body">
@@ -155,8 +205,8 @@
                                 <a href="" class="icon is-small"><i class="fa fa-reply"></i></a>
                               </button>
 
-                              {% if comment_counts != 0 %}
-                                    <i class="number-of-reaction">{{ comment_counts }}</i>
+                              {% if comment_ancestor.get_children.count != 0 %}
+                                    <i class="number-of-reaction">{{ comment_ancestor.get_children.count }}</i>
                               {% else %}
                                     <i class="zero-number-of reaction"></i>
                               {% endif %}
@@ -182,7 +232,7 @@
       
                                 <button type="submit">    
       
-                                    {% if request.user in post.likes.all %}
+                                    {% if request.user in comment_ancestor.likes.all %}
                                       <span class="icon is-small"><i class="fa fa-heart red" id="heart-toggle"></i></span>
                                       <!-- <span  class="like-btn{{post.pk}}">Liked</span>  -->
       
@@ -191,7 +241,7 @@
                                       <!-- <span  class="like-btn{{post.pk}}">Like</span>  -->
       
                                     {% endif %}
-                                    <i class="number-of-reaction">{{ post.likes.all.count }}</i>
+                                    <i class="number-of-reaction">{{ comment_ancestor.likes.all.count }}</i>
       
                                 </button>
                               </form>
@@ -244,10 +294,30 @@
                                 </div>
                             </div>                      
 
-                            <div class="post-current-right-header">
-                                <div class="right-post-content-header">
-                                <span class="post-ellipsis"><i class="fa fa-ellipsis-h"></i></span>
-                                </div>
+                            <div class="right-post-content-header">
+                              {% if current_comment.user == request.user %}
+                              <button class="edit-button">
+                                <a href="{% url 'comment-edit' current_comment.user.username current_comment.pk %}"><i class="fas fa-edit"></i><span>Edit</span></a>
+                              </button>
+                              <button class="delete-button">
+                                <a href="{% url 'comment-delete' current_comment.user.username current_comment.pk %}"><i class="fa-solid fa-trash"></i><span>Delete</span></a>
+                              </button>
+                              {% else %}
+                              <form action="{% url 'follow' current_comment.user.pk %}" method="post">
+                                {% csrf_token %}
+                                <button class="follow-button">
+        
+                                  <input type="hidden" name="next" value="{{ request.path }}">
+        
+                                  {% if current_comment.user not in request.user.profile.following.all %}
+                                  <i class="fas fa-user"></i>Follow
+                                  {% else %}
+                                  <i class="fas fa-user"></i>Following
+                                  {% endif %}
+                                  
+                                </button>
+                              </form>
+                              {% endif %}
                             </div>
                         </div>
                         <div class="post-content">
@@ -262,6 +332,12 @@
                                     <button>
                                       <a href="" class="icon is-small"><i class="fa fa-reply"></i></a>
                                     </button>
+
+                                    {% if current_comment.get_children.count != 0 %}
+                                          <i class="number-of-reaction">{{ current_comment.get_children.count }}</i>
+                                    {% else %}
+                                          <i class="zero-number-of reaction"></i>
+                                    {% endif %}
                                 </div>
         
                                 <div class="retweet-icon">
@@ -358,13 +434,12 @@
               </div>
 
 
-              {% for comment, comment_counts in mylist %}
+              {% for comment in comments_descendants %}
 
               <div class="comment-feed">
                   <div class="root">
                     <div class="comment">
                       <span href="#comment-2" class="comment-border-link">
-                        <span class="sr-only">Jump to comment-2</span>
                     </span>
                         <div class="post-inner">
                           
@@ -382,7 +457,25 @@
                                 <span class="post-time">{{ comment.created_on|timesince|upto:',' }}</span> 
                               </div>
                               <div class="right-post-content-header">
-                                <span class="post-ellipsis"><i class="fa fa-ellipsis-h"></i></span>
+                                {% if comment.user == request.user %}
+                                <span class="self-post-reminder">You write this</span>
+  
+                                {% else %}
+                                <form action="{% url 'follow' comment.user.pk %}" method="post">
+                                  {% csrf_token %}
+                                  <button class="follow-button">
+          
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+          
+                                    {% if comment.user not in request.user.profile.following.all %}
+                                    <i class="fas fa-user"></i>Follow
+                                    {% else %}
+                                    <i class="fas fa-user"></i>Following
+                                    {% endif %}
+                                    
+                                  </button>
+                                </form>
+                                {% endif %}
                               </div>
                             </div>
                             <div class="post-content-body">
@@ -395,8 +488,8 @@
                                   <a href="" class="icon is-small"><i class="fa fa-reply"></i></a>
                                 </button>
 
-                                {% if comment_counts != 0 %}
-                                      <i class="number-of-reaction">{{ comment_counts }}</i>
+                                {% if comment.get_children.count != 0 %}
+                                      <i class="number-of-reaction">{{ comment.get_children.count }}</i>
                                 {% else %}
                                       <i class="zero-number-of reaction"></i>
                                 {% endif %}

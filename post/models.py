@@ -34,6 +34,7 @@ class Post(MediaStream):
     likes = models.ManyToManyField(User, blank=True, related_name='post_likes')
     shares = models.ManyToManyField(User, blank=True, related_name='post_shares')
     bookmark = models.ManyToManyField(User, blank=True, related_name='post_bookmark')
+    updated = models.BooleanField(null=True, blank=True, default=False)
 
     def __str__(self):
         return self.post_body

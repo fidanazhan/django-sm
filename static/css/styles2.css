@@ -341,11 +341,6 @@ hr{
     box-shadow: 1px 1px 1px 2px #e7e7e7;
 }
 
-/* .post-feed:hover{
-    cursor: pointer;
-    background-color: #f1f1f1;
-} */
-
 .post-feed .post-link{
     position: absolute;
     display: block;
@@ -416,6 +411,55 @@ hr{
 
 .right-post-content-header{
     float: right;
+}
+
+.right-post-content-header button{
+    position: relative;
+    z-index: 11;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.right-post-content-header .self-post-reminder{
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 8px;
+    background-color: rgb(179, 179, 179);
+}
+
+.right-post-content-header .edit-button{
+    border: 1px solid rgb(59, 192, 59);
+    background:rgb(59, 192, 59);
+}
+
+.right-post-content-header .delete-button{
+    border: 1px solid rgb(214, 85, 65);
+    background:rgb(214, 85, 65);
+}
+
+.right-post-content-header .follow-button{
+    border: 1px solid linear-gradient(315deg, #f58cf5 0, #f684e7 74%);
+    background: linear-gradient(315deg, #f58cf5 0, #f684e7 74%);
+}
+
+.right-post-content-header .follow-form{
+    display: inline;
+}
+
+
+.right-post-content-header .edit-button i, 
+.right-post-content-header .delete-button i{
+    font-size: 14px;
+    color: #f6f6f6;
+}
+
+.right-post-content-header i{
+    padding: 5px;
+}
+
+.right-post-content-header a{
+    color: white;
 }
 
 .post-content .pro-name{
@@ -616,6 +660,30 @@ button {
     width: 1px;
     height: 1px;
     overflow: hidden;
+}
+
+.delete-quack-button{
+    padding: 5px 10px;
+    margin: 0 15px;
+}
+
+.delete-quack-button input{
+    padding: 8px 16px;
+    border-radius: 8px;
+    width: 100%;
+    border: 1px solid rgb(250, 116, 116);
+    background: rgb(250, 116, 116);
+    cursor: pointer;
+    font-size: 16px;
+    color: #ffffff;
+    font-weight: 500;
+    transition: 0.3s ease-in;
+}
+
+.delete-quack-button input:hover{
+    border: 1px solid rgb(254, 89, 89);
+    background: transparent;
+    color: rgb(254, 89, 89);
 }
 
 /* Comment */

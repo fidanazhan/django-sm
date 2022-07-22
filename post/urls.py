@@ -6,6 +6,8 @@ from . views import (PostListView, PostDetailView, PostLikeView,
                      CommentReplyView, CommentReplySubmitView,
                      
                      BookmarkView, BookmarkPostView, BookmarkCommentView,
+
+                     PostEditView, PostDeleteView, CommentEditView, CommentDeleteView,
                      
                      NotificationView)
 
@@ -28,6 +30,10 @@ urlpatterns = [
     path('<uuid:pk>/post/bookmark', BookmarkPostView.as_view(), name='bookmark-post'),
     path('<int:pk>/comment/bookmark', BookmarkCommentView.as_view(), name='bookmark-comment'),
 
+    path('status/<str:user>/<uuid:pk>/edit', PostEditView.as_view(), name='post-edit'),
+    path('status/<str:user>/<uuid:pk>/delete', PostDeleteView.as_view(), name='post-delete'),
+    path('status/<str:user>/<int:pk>/edit', CommentEditView.as_view(), name='comment-edit'),
+    path('status/<str:user>/<int:pk>/delete', CommentDeleteView.as_view(), name='comment-delete'),
 
     
 ]

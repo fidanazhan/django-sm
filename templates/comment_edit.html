@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% load class_name %}
+{% load upto %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<section class="main"> 
+    <div class="main-header">
+        <div class="toggle-header">
+          <button onclick="openLeftSidebar()">
+            <i class="bx bx-menu" id="header-toggle">
+            </i>
+          </button>
+        </div>
+        Edit Quack
+        <div class="image-header">
+          <p class="image image-header-size">
+            <img class="image-circle" src="https://bulma.io/images/placeholders/128x128.png">
+          </p>
+        </div>
+    </div>
+    <hr class="hr-1">
+    <div class="main-body">
+          <div class="pad-t">  
+            .              
+          </div>
+
+
+
+          <div class="post-feed">
+            <div class="post-inner">
+              
+              <div class="post-content" id="post-{{post.pk}}">
+                
+                <div class="post-content-header">
+                  <div class="left-post-content-header">
+                    <span class="post-pro-pic">
+                      {% if request.user.profile.picture %}
+                        <a href="{% url 'profile' request.user.username %}">
+                          <img class="post-image-circle" src="{{ request.user.profile.picture.url }}" alt="">
+                        </a>
+                      </span>
+                      {% endif %}
+                    <a href="{% url 'profile' request.user.username %}" class="pro-name">{{ request.user.username}}</a> 
+                  </div>                  
+                </div>
+                <div class="post-content-body">
+                  <p class="comment-body">
+                    <form method="post">
+                      {% csrf_token %}
+                      
+                      {{ form.commented_body }}
+
+                      <input type="hidden" name="next" value="{{ request.path }}">
+
+                      <input class="submit-button" type="submit" value="Edit Comment">
+                    </form>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- New Post Feed -->
+
+          <hr class="hr-1">
+  
+    </div>
+</section>
+
+{% endblock %}

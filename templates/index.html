@@ -29,39 +29,42 @@
             .              
           </div>
           <hr>
-          <div class="story">
+          <!-- <div class="story">
               Story
           </div>
-          <hr>
+          <hr> -->
 
-          <div class="post">
 
-            <article class="media">
-              <figure class="media-left">
-                <p class="image image-size">
-                    <a href="">
-                      <img class="image-circle" src="">
-                    </a>
-                </p>
-              </figure>
-              <div class="media-content">
-                <div class="content">
-                    <strong>{{ request.user.username }}</strong> <small>@{{ request.user.username }}</small>
-
+          <div class="post-feed">
+            <div class="post-inner">
+              
+              <div class="post-content" id="post-{{post.pk}}">
+                
+                <div class="post-content-header">
+                  <div class="left-post-content-header">
+                    <span class="post-pro-pic">
+                      {% if request.user.profile.picture %}
+                        <a href="{% url 'profile' request.user.username %}">
+                          <img class="post-image-circle" src="{{ request.user.profile.picture.url }}" alt="">
+                        </a>
+                      </span>
+                      {% endif %}
+                    <a href="{% url 'profile' request.user.username %}" class="pro-name">{{ request.user.username}}</a> 
+                  </div>                  
+                </div>
+                <div class="post-content-body">
+                  <p class="comment-body">
                     <form action="{% url 'post-list' %}" method="post">
-                        {% csrf_token %}
-
-                      <!-- <textarea class="post-box" id="w3review" name="w3review" rows="4" cols="50" placeholder="What's happening..."></textarea> -->
+                      {% csrf_token %}
                       
                       {{ form.post_body }}
-                      <input class="left-button" type="text" id="submitPost" value="Picture">
 
                       <input class="submit-button" type="submit" id="submitPost" value="Quack">
-                  </form>
+                    </form>
+                  </p>
                 </div>
               </div>
-            </article>
-              
+            </div>
           </div>
 
           <!-- New Post Feed -->
@@ -70,10 +73,8 @@
 
           {% for post in posts %}
             <div class="post-feed">
-              <div class="post-inner">
-                
-                <div class="post-content" id="post-{{post.pk}}">
-                  
+              <div class="post-inner">               
+                <div class="post-content" id="post-{{post.pk}}">                
                   <div class="post-content-header">
                     <div class="left-post-content-header">
                       <span class="post-pro-pic">
@@ -87,8 +88,28 @@
                       <span class="post-time">{{ post.created_on|timesince|upto:',' }}</span> 
                     </div>
                     <div class="right-post-content-header">
-                      <span class="post-ellipsis"><i class="fa fa-ellipsis-h"></i></span>
+                      {% if post.user == request.user %}
+                      <span class="self-post-reminder">You write this</span>
+                      {% else %}
+                      {% if post.updated %}
+                        <span class="self-post-reminder">Post Edited</span>
+                      {% endif %}
+                      <form class="follow-form" action="{% url 'follow' post.user.pk %}" method="post">
+                        {% csrf_token %}
+                        <button class="follow-button">
+
+                          <input type="hidden" name="next" value="{{ request.path }}">
+
+                          {% if post.user not in request.user.profile.following.all %}
+                          <i class="fas fa-user"></i>Follow
+                          {% else %}
+                          <i class="fas fa-user"></i>Following
+                          {% endif %}
+                        </button>
+                      </form>                       
+                      {% endif %}
                     </div>
+                    
                   </div>
                   <div class="post-content-body">
                     <p class="comment-body">{{post.post_body}}</p>
@@ -179,17 +200,10 @@
                 </div>
               </div>
               <a href="{% url 'post-detail' post.user.username post.pk %}" class="post-link"></a>
-            </div>
-          
-
-            <!-- <hr  class="hr-1"> -->
-
+            </div>      
           {% endfor %}
   
     </div>
 </section>
-
-
-</div>
 
 {% endblock %}

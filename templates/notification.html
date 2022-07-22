@@ -240,8 +240,7 @@
 
                   <hr class="hr-1">
 
-                  {% endif %}
-                  {% if notification.notification_types == 2 %}
+                  {% elif notification.notification_types == 2 %}
                   
                   <div class="post-feed">
                       <p class="notification-type-sentences"><a class="notification-sender-link" href="{% url 'profile' notification.sender %}">{{notification.sender}}</a> has requack your quack.</p>
@@ -447,6 +446,10 @@
                       
                   <hr  class="hr-1">
                   
+                  {% endif %}
+
+                  {% if notification.notification_types ==  5 %}
+                  <p>{{notification.sender}} has followed you</p>
                   {% endif %}
 
                   {% if notification.notification_types ==  3 %}
@@ -671,9 +674,7 @@
                   <hr  class="hr-1">
                   {% endif %}
 
-                  {% if notification.notification_types ==  5 %}
-                  <p>{{notification.sender}} has followed you</p>
-                  {% endif %}
+
             
             {% endif %}
 

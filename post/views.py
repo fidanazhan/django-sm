@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 
 from django.views import View
+from django.views.generic.edit import UpdateView, DeleteView
 #from django.views.generic.edit 
 
 from .forms import PostForm, CommentForm
@@ -202,6 +203,28 @@ class PostShareView(LoginRequiredMixin, View):
         next = request.POST.get('next', '')
         return HttpResponseRedirect(next) 
 
+class PostEditView(LoginRequiredMixin, UpdateView):
+    model = Post
+    form_class = PostForm
+    template_name = 'post_edit.html'
+    pk_url_kwargs = 'pk'
+
+    def form_valid(self, form):
+        new_post = form.save(commit=False)
+        new_post.updated = True
+        new_post.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        user = self.request.user
+        pk = self.kwargs["pk"]
+        return reverse("post-detail", kwargs={"pk": pk, "user":user})
+
+class PostDeleteView(LoginRequiredMixin, DeleteView):
+    model = Post
+    template_name = 'post_delete.html'
+    pk_url_kwargs = 'pk'
+    success_url = '/home/'
 
 
 # ------------------------- COMMENTS PART -------------------------
@@ -284,6 +307,7 @@ class CommentReplyView(LoginRequiredMixin, View):
         
         comment_form = CommentForm()
 
+        # Current comment
         current_comment = Comment.objects.get(pk=pk)
         post = Comment.objects.get(pk=pk).commented_post
         level = Comment.objects.get(pk=pk).level
@@ -291,23 +315,14 @@ class CommentReplyView(LoginRequiredMixin, View):
         # Comment Ancestor
         comments_ancestors = current_comment.get_ancestors()
 
+        # print(current_comment.parent.pk)
+
         # Comment Descendant
-        comments_descendant = current_comment.get_descendants().filter(level = level + 1)        
-        comment_list = list(comments_descendant)
-
-        # Comment Count 
-        comment_counts_list = []
-
-        for comment in comments_descendant:
-            comment_counts_list.append(comment.get_descendants().filter(level=1).count())
-
-
-        # Comment MyList
-        mylist = zip(comment_list, comment_counts_list)
+        comments_descendants = current_comment.get_descendants().filter(level = level + 1)        
 
         context = {
             'post' : post, 
-            'mylist' : mylist,
+            'comments_descendants' : comments_descendants,
             'comment_ancestors' : comments_ancestors,
             'current_comment': current_comment,
             'form' : comment_form
@@ -339,6 +354,43 @@ class CommentReplySubmitView(LoginRequiredMixin, View):
 
         # return redirect('post-detail', pk=post.pk)
         return redirect('comment-detail', user=current_comment.user.username, pk=current_comment.pk)
+
+class CommentEditView(LoginRequiredMixin, UpdateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'comment_edit.html'
+    pk_url_kwargs = 'pk'
+
+    def form_valid(self, form):
+        new_post = form.save(commit=False)
+        new_post.updated = True
+        new_post.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        user = self.request.user
+        pk = self.kwargs["pk"]
+
+        comment = Comment.objects.get(pk=pk)
+
+        return reverse("comment-detail", kwargs={"pk": pk, "user":user})
+
+
+class CommentDeleteView(LoginRequiredMixin, DeleteView):
+    model = Comment
+    template_name = 'comment_delete.html'
+    pk_url_kwargs = 'pk'
+
+    def get_success_url(self):
+        user = self.request.user
+        pk = self.kwargs["pk"]
+
+        comment = Comment.objects.get(pk=pk)
+
+        if comment.parent:
+            return reverse("comment-detail", kwargs={"pk": comment.parent.pk, "user":user})
+        else:
+            return reverse("post-detail", kwargs={"pk": comment.commented_post.pk, "user":user})
 
 
 

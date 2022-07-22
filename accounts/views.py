@@ -4,6 +4,8 @@ from django.urls import reverse_lazy
 
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.http import HttpResponseRedirect
+
 
 from accounts.models import Profile, Follow
 from post.models import Post, Like
@@ -74,5 +76,7 @@ class FollowSubmitView(LoginRequiredMixin, View):
                 follow_obj = Follow.objects.filter(follower=user, following=following_user_id.user_obj)
                 follow_obj.delete()
 
+        next = request.POST.get('next', '')
+        return HttpResponseRedirect(next)
 
-        return redirect('profile', user=following_user_id.user_obj.username)
+        # return redirect('profile', user=following_user_id.user_obj.username)

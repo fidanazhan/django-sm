@@ -61,6 +61,9 @@
                     <form action="{% url 'follow' user_profile.user_obj.pk %}" method="post">
                       {% csrf_token %}
                       <button type="submit" class="button-follow">
+
+                          <input type="hidden" name="next" value="{{ request.path }}">
+
                           {% if user_profile.user_obj not in requested_user_following %}
                           <p>Follow</p>
                           {% else %}

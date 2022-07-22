@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% load class_name %}
+{% load upto %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<section class="main"> 
+    <div class="main-header">
+      <div class="toggle-header">
+        <button onclick="openLeftSidebar()">
+          <i class="bx bx-menu" id="header-toggle">
+          </i>
+        </button>
+      </div>
+        Delete Post
+      <div class="image-header">
+        <p class="image image-header-size">
+          <img class="image-circle" src="https://bulma.io/images/placeholders/128x128.png">
+        </p>
+      </div>
+    </div>
+    <hr class="hr-1">
+
+    <div class="main-body">
+          <div class="pad-t">  
+            .              
+          </div>
+          {% if request.user == comment.user %}
+
+          <div class="post-feed">
+            <div class="post-inner">               
+              <div class="post-content" id="post-{{post.pk}}">                
+                <div class="post-content-header">
+                  <div class="left-post-content-header">
+                    <span class="post-pro-pic">
+                      {% if comment.user.profile.picture %}
+                        <a href="{% url 'profile' comment.user.username %}">
+                          <img class="post-image-circle" src="{{ comment.user.profile.picture.url }}" alt="">
+                        </a>
+                      </span>
+                      {% endif %}
+                    <a href="{% url 'profile' comment.user.username %}" class="pro-name">{{ comment.user.username }}</a> 
+                    <span class="post-time">{{ comment.created_on|timesince|upto:',' }}</span> 
+                  </div>
+                  <div class="right-post-content-header">
+                    {% if comment.user == request.user %}
+                    <button class="edit-button">
+                      <a href="{% url 'comment-edit' comment.user.username comment.pk %}"><i class="fas fa-edit"></i><span>Edit</span></a>
+                    </button>
+                    {% endif %}
+                  </div>
+                  
+                </div>
+                <div class="post-content-body">
+                  <p class="comment-body">{{comment.commented_body}}</p>
+                </div>
+                <hr class="hr-3">
+                <div class="post-content-footer">
+                    <div class="reply-icon">
+                      <button>
+                        <a class="fa fa-reply" href="{% url 'comment-detail' comment.user.username comment.pk %}"></a>
+                        {% if comment.get_comments.count != 0 %}
+                        <span><i class="number-of-reaction"> {{comment.get_comments.count}}</i></span>
+                        {% else %}
+                        <span> <i></i></span>
+                        {% endif %}
+                      </button>
+                    </div>
+
+                    <div class="retweet-icon">
+                      <form action="{% url 'comment-share' comment.pk %}" method="post">
+                          {% csrf_token %}
+
+                          <input type="hidden" name="next" value="{{ request.path }}">
+
+                          <button type="submit">
+                            {% if request.user in comment.shares.all %}
+                            <span class="icon is-small"><i class="fa fa-retweet green"></i></span>
+
+                            {% else %}
+                            <span class="icon is-small"><i class="fa fa-retweet" id="heart-toggle"></i></span>
+
+                            {% endif %}
+                            <i class="number-of-reaction">{{ comment.shares.all.count }}</i>
+                          </button>
+                      </form>
+                    </div>
+                    
+
+                    <div class="heart-icon">
+
+                      <form action="{% url 'comment-like' comment.pk %}" method="post">
+
+                        {% csrf_token %}
+
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        
+
+                        <button type="submit">    
+
+                            {% if request.user in comment.likes.all %}
+                              <span class="icon is-small"><i class="fa fa-heart red" id="heart-toggle"></i></span>
+
+                            {% else %}
+                              <span class="icon is-small"><i class="fa fa-regular fa-heart" id="heart-toggle"></i></span>
+
+                            {% endif %}
+                            <i class="number-of-reaction">{{ comment.likes.all.count }}</i>
+
+                        </button>
+                      </form>
+
+                        
+                    </div>
+
+                    <div class="post-saved-item">
+                      <form action="{% url 'bookmark-comment' comment.pk %}" method="post">
+                        {% csrf_token %}
+
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        
+
+                        <button type="submit">    
+
+                            {% if request.user in comment.bookmark.all %}
+                              <span class="icon is-small"><i class="fa fa-bookmark" id="heart-toggle"></i></span>
+
+                            {% else %}
+                              <span class="icon is-small"><i class="fa fa-regular fa-bookmark" id="heart-toggle"></i></span>
+
+                            {% endif %}
+                        </button>
+
+                      </form>
+                    </div>
+                </div>
+
+              </div>
+            </div>
+            <a href="{% url 'comment-detail' comment.user.username comment.pk %}" class="post-link"></a>
+          </div>  
+
+          <!-- New Post Feed -->
+
+          <hr class="hr-1">
+
+            <form class="delete-quack-button" method="post">
+              
+              {% csrf_token %}
+                    
+              <input type="submit" value="Are you sure you want to delete above comment?">
+            </form>
+
+          {% else %}
+          <div class="403-reminder">
+            You are not authorize here.
+          </div>
+          {% endif %}
+    </div>
+</section>
+
+{% endblock %}

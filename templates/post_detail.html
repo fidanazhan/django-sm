@@ -12,7 +12,7 @@
 
 {% block content %}
 
-    <div class="main"> 
+    <section class="main"> 
         <div class="main-header">
           <div class="toggle-header">
             <button onclick="openLeftSidebar()">
@@ -55,10 +55,30 @@
                                 </div>
                             </div>                      
 
-                            <div class="post-current-right-header">
-                                <div class="right-post-content-header">
-                                <span class="post-ellipsis"><i class="fa fa-ellipsis-h"></i></span>
-                                </div>
+                            <div class="right-post-content-header">
+                              {% if post.user == request.user %}
+                              <button class="edit-button">
+                                <a href="{% url 'post-edit' post.user.username post.pk %}"><i class="fas fa-edit"></i><span>Edit</span></a>
+                              </button>
+                              <button class="delete-button">
+                                <a href="{% url 'post-delete' post.user.username post.pk %}"><i class="fa-solid fa-trash"></i><span>Delete</span></a>
+                              </button>
+                              {% else %}
+                              <form action="{% url 'follow' post.user.pk %}" method="post">
+                                {% csrf_token %}
+                                <button class="follow-button">
+        
+                                  <input type="hidden" name="next" value="{{ request.path }}">
+        
+                                  {% if post.user not in request.user.profile.following.all %}
+                                  <i class="fas fa-user"></i>Follow
+                                  {% else %}
+                                  <i class="fas fa-user"></i>Following
+                                  {% endif %}
+                                  
+                                </button>
+                              </form>
+                              {% endif %}
                             </div>
                         </div>
                         <div class="post-content">
@@ -223,7 +243,24 @@
                                 <span class="post-time">{{ comment.created_on|timesince|upto:',' }}</span> 
                               </div>
                               <div class="right-post-content-header">
-                                <span class="post-ellipsis"><i class="fa fa-ellipsis-h"></i></span>
+                              {% if comment.user == request.user %}
+                                <span class="self-post-reminder">You write this</span>
+                              {% else %}
+                              <form action="{% url 'follow' post.user.pk %}" method="post">
+                                {% csrf_token %}
+                                <button class="follow-button">
+        
+                                  <input type="hidden" name="next" value="{{ request.path }}">
+        
+                                  {% if post.user not in request.user.profile.following.all %}
+                                  <i class="fas fa-user"></i>Follow
+                                  {% else %}
+                                  <i class="fas fa-user"></i>Following
+                                  {% endif %}
+                                  
+                                </button>
+                              </form>
+                              {% endif %}
                               </div>
                             </div>
                             <div class="post-content-body">
@@ -328,7 +365,6 @@
               </div>
 
               {% endfor %}
-        </div>
-    </div>
+    </section>
 
 {% endblock %}
