@@ -1088,6 +1088,11 @@ button {
         margin-left: 100px;
     }
 
+    .profile-image-circle{
+        margin-left: 0;
+    }
+
+
 }
 
 @media only screen and (max-width: 385px) {

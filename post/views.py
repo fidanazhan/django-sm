@@ -13,6 +13,8 @@ from .forms import PostForm, CommentForm
 from . models import Post, Like, Comment, Share, Bookmark, Notification
 from accounts . models import Follow
 
+from django.db.models import Q
+
 from itertools import chain
 
 
@@ -30,29 +32,49 @@ class PostListView(LoginRequiredMixin, View):
         for follower in followers:
             following_list.append(follower.following)
 
-        user = request.user
-        #user_bookmark = Bookmark.objects.filter(user=user)
-        # # posts = user_bookmark.bookmark_post
-        # for post in user_bookmark:
-        #     print(post)
 
-        # Following's quack
-        following_posts = Post.objects.filter(user__username__in=following_list).all().order_by('-created_on')
-        
-        # Self quack
-        self_posts = Post.objects.filter(user=user).all().order_by('-created_on')
+        # 1 ------ Following's quack ------
+        following_posts = Post.objects.filter(user__username__in=following_list).all()
+        print(following_posts)
+        # ------------------------------------        
 
-        # Following reply quack
+        # 2 ------ Following LIKES quack ------
+        # 1. Show post that following like but if the post author is request.user, exclude that post
+        following_liked_posts= Like.objects.filter(user__username__in=following_list).exclude(Q(liked_post__user__username__contains =
+         user) |  Q(liked_comment__user__username__contains = user))
+        # ------------------------------------
+
+
+        # 3 ------ Following SHARE quack 
+        # following_shared_posts = Share.objects.filter(user__username__in=following_list).exclude(shared_post__user__username__contains =
+        #  user, shared_comment__user__username__contains = user)
+        # --------------------------------------
+
+        # 4 ------ Following reply quack/comment ------
         #following_reply_posts = Comment.objects.filter(user__username__in=following_list).all().order_by('-created_on')
+        # ------------------------------------
 
-        posts_chain = list(chain(following_posts, self_posts))
+        # 5 ------ Self quack ------
+        self_posts = Post.objects.filter(user=user).all()
+        # ------------------------------------
+
+
+        # posts_chain = list(chain(following_posts, self_posts))
+        # posts = sorted(posts_chain, key=lambda instance: instance.created_on, reverse=True)
+
+        posts_chain = list(chain(self_posts, 
+                              following_posts,
+                              following_liked_posts, 
+                            #   following_shared_posts
+                              ))
         posts = sorted(posts_chain, key=lambda instance: instance.created_on, reverse=True)
-
-        # result_1 = list(chain(following_posts, self_posts, following_reply_posts))
-        # posts_1 = sorted(result_1, key=lambda instance: instance.created_on)
-        # for post in posts1:
+        # # posts = sorted(result_1, key=lambda instance: instance.created_on, reverse=True)
+        # for post in posts_1:
+        #     print(type(post))
         #     print(post)
-        # print(posts)
+        #     print(post.user)
+        #     print(post.created_on)
+        # print(posts_1)
     
         form = PostForm()
 
@@ -315,7 +337,6 @@ class CommentReplyView(LoginRequiredMixin, View):
         # Comment Ancestor
         comments_ancestors = current_comment.get_ancestors()
 
-        # print(current_comment.parent.pk)
 
         # Comment Descendant
         comments_descendants = current_comment.get_descendants().filter(level = level + 1)        
@@ -458,8 +479,6 @@ class BookmarkCommentView(LoginRequiredMixin, View):
         next = request.POST.get('next', '')
         print(next)
         return HttpResponseRedirect(next)
-
-
 
 # ------------------------- NOTIFICATION PART -------------------------
 # Go to ' notification'. Notification list. GET Method

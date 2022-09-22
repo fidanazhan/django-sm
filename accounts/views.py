@@ -40,6 +40,7 @@ class ProfileView(LoginRequiredMixin, View):
         requested_user_following = request.user.profile.following.all()
 
         user_profile = get_object_or_404(Profile, user_obj__username=user)
+        print(user_profile)
         user_id = user_profile.user_obj.id
         user_post = Post.objects.filter(user__pk=user_id).order_by('-created_on')
         user_post_liked = Like.objects.filter(user__pk=user_id).order_by('-created_on')

@@ -58,7 +58,7 @@ class Comment(MediaStream, MPTTModel):
     bookmark = models.ManyToManyField(User, blank=True, related_name='comment_bookmark')
 
     def __str__(self):
-        return self.commented_body
+        return str(self.pk) + " " + self.commented_body
 
     def get_children(self):
         return Comment.objects.filter(parent=self)
@@ -86,7 +86,8 @@ class Like(MediaStream):
         else:
             liked_obj = self.liked_post
 
-        return '%s - %s' % (liked_obj, self.user)
+        return  '%s - %s - %s' % (str(self.pk), liked_obj, self.user)
+        # return  '%s - %s' % (liked_obj, self.user)
 
 class Share(MediaStream):
     shared_post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name = 'post_shared', null=True, blank=True)
@@ -99,7 +100,7 @@ class Share(MediaStream):
         else:
             liked_obj = self.shared_post
 
-        return '%s - %s' % (liked_obj, self.user)
+        return  '%s - %s - %s' % (str(self.pk), liked_obj, self.user)
 
 class Bookmark(MediaStream):
     bookmark_post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name = 'post_bookmark', null=True, blank=True)

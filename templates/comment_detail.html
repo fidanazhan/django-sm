@@ -213,9 +213,20 @@
                             </div>
         
                             <div class="retweet-icon">
-                              <form action="" method="post">
+                              <form action="{% url 'post-share' post.pk %}" method="post">
+                                  {% csrf_token %}
+      
+                                  <input type="hidden" name="next" value="{{ request.path }}">
+      
                                   <button type="submit">
-                                    <span class="icon is-small"><i class="fa fa-retweet"></i></span>
+                                    {% if request.user in post.shares.all %}
+                                    <span class="icon is-small"><i class="fa fa-retweet green"></i></span>
+      
+                                    {% else %}
+                                    <span class="icon is-small"><i class="fa fa-retweet" id="heart-toggle"></i></span>
+      
+                                    {% endif %}
+                                    <i class="number-of-reaction">{{ post.shares.all.count }}</i>
                                   </button>
                               </form>
                             </div>
@@ -323,7 +334,11 @@
                         <div class="post-content">
                           
                           <div class="post-current-content-body">
+                            {% if current_comment.parent == None %}
                             <p class="comment-reply-to-p">replying to<a href="" class="comment-reply-to-a"> @{{current_comment.commented_post.user.username }}</a></p>
+                            {% else %}
+                            <p class="comment-reply-to-p">replying to<a href="" class="comment-reply-to-a"> @{{current_comment.parent.user.username }}</a></p>
+                            {% endif %}
                             <p>{{ current_comment.commented_body }}</p>
                             <h6 class="post-current-time-posted">{{ current_comment.created_on }}</h6>
                             <hr>
@@ -341,9 +356,20 @@
                                 </div>
         
                                 <div class="retweet-icon">
-                                  <form action="" method="post">
+                                  <form action="{% url 'post-share' post.pk %}" method="post">
+                                      {% csrf_token %}
+          
+                                      <input type="hidden" name="next" value="{{ request.path }}">
+          
                                       <button type="submit">
-                                        <span class="icon is-small"><i class="fa fa-retweet"></i></span>
+                                        {% if request.user in post.shares.all %}
+                                        <span class="icon is-small"><i class="fa fa-retweet green"></i></span>
+          
+                                        {% else %}
+                                        <span class="icon is-small"><i class="fa fa-retweet" id="heart-toggle"></i></span>
+          
+                                        {% endif %}
+                                        <i class="number-of-reaction">{{ post.shares.all.count }}</i>
                                       </button>
                                   </form>
                                 </div>
@@ -479,7 +505,7 @@
                               </div>
                             </div>
                             <div class="post-content-body">
-                              <p class="comment-reply-to-p">replying to <a href="" class="comment-reply-to-a"> @{{comment.commented_post.user.username }}</a></p>
+                              <p class="comment-reply-to-p">replying to<a href="" class="comment-reply-to-a"> @{{comment.parent.user.username }}</a></p>
                               <p class="comment-body">{{ comment.commented_body }}</p>
                             </div>
                             <div class="post-content-footer">
@@ -496,9 +522,20 @@
                               </div>
           
                               <div class="retweet-icon">
-                                <form action="" method="post">
+                                <form action="{% url 'post-share' post.pk %}" method="post">
+                                    {% csrf_token %}
+        
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+        
                                     <button type="submit">
-                                      <span class="icon is-small"><i class="fa fa-retweet"></i></span>
+                                      {% if request.user in post.shares.all %}
+                                      <span class="icon is-small"><i class="fa fa-retweet green"></i></span>
+        
+                                      {% else %}
+                                      <span class="icon is-small"><i class="fa fa-retweet" id="heart-toggle"></i></span>
+        
+                                      {% endif %}
+                                      <i class="number-of-reaction">{{ post.shares.all.count }}</i>
                                     </button>
                                 </form>
                               </div>

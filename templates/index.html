@@ -73,8 +73,24 @@
 
           {% for post in posts %}
             <div class="post-feed">
+
+              {% if post|class_name == 'Like' %}
+                
+              {% if post.liked_post %}
+                <p class="notification-type-sentences"><a class="notification-sender-link" href="">{{ post.user.username }}</a> has liked</p>
+              {% else %}
+                <p class="notification-type-sentences"><a class="notification-sender-link" href="{% url 'profile' post.user.username %}">{{ post.user.username  }}</a> has liked</p>
+              {% endif %}
+
+              {% elif post|class_name == 'Reply' %}
+
+                <p class="notification-type-sentences"><a class="notification-sender-link" href=""></a> has commented</p>
+
+              {% endif %}
+
               <div class="post-inner">               
-                <div class="post-content" id="post-{{post.pk}}">                
+                <div class="post-content" id="post-{{post.pk}}">
+                  {% if post|class_name == 'Post' %}                
                   <div class="post-content-header">
                     <div class="left-post-content-header">
                       <span class="post-pro-pic">
@@ -111,23 +127,208 @@
                     </div>
                     
                   </div>
+                  {% elif post|class_name == 'Like'%}
+                    {% if post.liked_post %}
+                      <div class="post-content-header">
+                        <div class="left-post-content-header">
+                          <span class="post-pro-pic">
+                            {% if post.liked_post.user.profile.picture %}
+                              <a href="{% url 'profile' post.liked_post.user.username %}">
+                                <img class="post-image-circle" src="{{ post.liked_post.user.profile.picture.url }}" alt="">
+                              </a>
+                            </span>
+                            {% endif %}
+                          <a href="{% url 'profile' post.liked_post.user.username %}" class="pro-name">{{ post.liked_post.user.username }}</a> 
+                          <span class="post-time">{{ post.liked_post.created_on|timesince|upto:',' }}</span> 
+                        </div>
+                        <div class="right-post-content-header">
+                          {% if post.liked_post.user == request.user %}
+                          <span class="self-post-reminder">You write this</span>
+                          {% else %}
+                          {% if post.liked_post.updated %}
+                            <span class="self-post-reminder">Post Edited</span>
+                          {% endif %}
+                          <form class="follow-form" action="{% url 'follow' post.liked_post.user.pk %}" method="post">
+                            {% csrf_token %}
+                            <button class="follow-button">
+
+                              <input type="hidden" name="next" value="{{ request.path }}">
+
+                              {% if post.liked_post.user not in request.user.profile.following.all %}
+                              <i class="fas fa-user"></i>Follow
+                              {% else %}
+                              <i class="fas fa-user"></i>Following
+                              {% endif %}
+                            </button>
+                          </form>                       
+                          {% endif %}
+                        </div>
+                        
+                      </div>
+                    {% else %}
+                      {% if post.liked_comment.parent %}
+                      <div class="post-content-header">
+                        <div class="left-post-content-header">
+                          <span class="post-pro-pic">
+                            {% if post.liked_comment.user.profile.picture %}
+                              <a href="{% url 'profile' post.liked_comment.user.username %}">
+                                <img class="post-image-circle" src="{{ post.liked_comment.user.profile.picture.url }}" alt="">
+                              </a>
+                            </span>
+                            {% endif %}
+                          <a href="{% url 'profile' post.liked_comment.user.username %}" class="pro-name">{{ post.liked_comment.user.username }}</a> 
+                          <span class="post-time">{{ post.liked_comment.created_on|timesince|upto:',' }}</span> 
+                        </div>
+                        <div class="right-post-content-header">
+                          {% if post.liked_comment.user == request.user %}
+                          <span class="self-post-reminder">You write this</span>
+                          {% else %}
+                          {% if post.liked_comment.updated %}
+                            <span class="self-post-reminder">Post Edited</span>
+                          {% endif %}
+                          <form class="follow-form" action="{% url 'follow' post.liked_comment.user.pk %}" method="post">
+                            {% csrf_token %}
+                            <button class="follow-button">
+
+                              <input type="hidden" name="next" value="{{ request.path }}">
+
+                              {% if post.liked_comment.user not in request.user.profile.following.all %}
+                              <i class="fas fa-user"></i>Follow
+                              {% else %}
+                              <i class="fas fa-user"></i>Following
+                              {% endif %}
+                            </button>
+                          </form>                       
+                          {% endif %}
+                        </div>
+                        
+                      </div>
+                      {% else %}
+                      <div class="post-content-header">
+                        <div class="left-post-content-header">
+                          <span class="post-pro-pic">
+                            {% if post.liked_comment.user.profile.picture %}
+                              <a href="{% url 'profile' post.liked_comment.user.username %}">
+                                <img class="post-image-circle" src="{{ post.liked_comment.user.profile.picture.url }}" alt="">
+                              </a>
+                            </span>
+                            {% endif %}
+                          <a href="{% url 'profile' post.liked_comment.user.username %}" class="pro-name">{{ post.liked_comment.user.username }}</a> 
+                          <span class="post-time">{{ post.liked_comment.created_on|timesince|upto:',' }}</span> 
+                        </div>
+                        <div class="right-post-content-header">
+                          {% if post.liked_comment.user == request.user %}
+                          <span class="self-post-reminder">You write this</span>
+                          {% else %}
+                          {% if post.liked_comment.updated %}
+                            <span class="self-post-reminder">Post Edited</span>
+                          {% endif %}
+                          <form class="follow-form" action="{% url 'follow' post.liked_comment.user.pk %}" method="post">
+                            {% csrf_token %}
+                            <button class="follow-button">
+
+                              <input type="hidden" name="next" value="{{ request.path }}">
+
+                              {% if post.liked_comment.user not in request.user.profile.following.all %}
+                              <i class="fas fa-user"></i>Follow
+                              {% else %}
+                              <i class="fas fa-user"></i>Following
+                              {% endif %}
+                            </button>
+                          </form>                       
+                          {% endif %}
+                        </div>
+                        
+                      </div>
+                      {% endif %}
+                    {% endif %}
+                  {% endif %}
                   <div class="post-content-body">
-                    <p class="comment-body">{{post.post_body}}</p>
+                    {% if post|class_name == 'Post' %}
+
+                      <p class="comment-body">{{post.post_body}}</p>
+                      <p class="comment-body">{{ post | class_name }} </p>
+
+                    {% elif post|class_name == 'Like' %}
+
+                      {% if post.liked_post %}
+                      <!-- Like post -->
+                      <p class="comment-body">{{post.liked_post.post_body}}</p>
+
+                      {% else %}
+                        {% if post.liked_comment.parent %}
+                          <!-- Like that replied to comment -->
+                          <p class="comment-reply-to-p">replying to<a href="" class="comment-reply-to-a"> @{{ post.liked_comment.parent.user.username }}</a></p>
+                          <p class="comment-body">{{post.liked_comment.commented_body}}</p>
+                          Like that replied to comment 
+                         
+
+                        {% else %}
+                           <!-- Like that replied to post -->
+                           <p class="comment-reply-to-p">replying to<a href="" class="comment-reply-to-a"> @{{ post.liked_comment.commented_post.user.username }}</a></p>
+                           <p class="comment-body">{{post.liked_comment.commented_body}}</p>
+                           Like that replied to post 
+                        {% endif %}
+                      {% endif %}
+
+                    {% endif %}
                   </div>
                   <hr class="hr-3">
                   <div class="post-content-footer">
                       <div class="reply-icon">
                         <button>
-                          <a class="fa fa-reply" href="{% url 'post-detail' post.user.username post.pk %}"></a>
-                          {% if post.get_comments.count != 0 %}
-                          <span><i class="number-of-reaction"> {{post.get_comments.count}}</i></span>
-                          {% else %}
-                          <span> <i></i></span>
+                          {% if post|class_name == 'Post' %}
+
+                            <a class="fa fa-reply" href="{% url 'post-detail' post.user.username post.pk %}"></a>
+
+                            {% if post.get_comments.count != 0 %}
+                            <span><i class="number-of-reaction"> {{post.get_comments.count}}</i></span>
+                            {% else %}
+                            <span> <i></i></span>
+                            {% endif %}
+
+                          {% elif post|class_name == 'Like' %}
+
+                            {% if post.liked_post %}
+                              <a class="fa fa-reply" href="{% url 'post-detail' post.liked_post.user.username post.liked_post.pk %}"></a>
+
+                              {% if post.liked_post.get_comments.count != 0 %}
+                              <span><i class="number-of-reaction"> {{post.liked_post.get_comments.count}}</i></span>
+                              {% else %}
+                              <span> <i></i></span>
+                              {% endif %}
+
+                            {% else %}
+
+                              {% if post.liked_comment.parent %}
+                                <a class="fa fa-reply" href="{% url 'comment-detail' post.liked_comment.user.username post.liked_comment.pk %}"></a>
+
+                                {% if post.liked_comment.get_children.count != 0 %}
+                                  <span><i class="number-of-reaction"> {{ post.liked_comment.get_children.count }}</i></span>
+                                {% else %}
+                                  <span> <i></i></span>
+                                {% endif %}
+
+                              {% else %}
+                                <a class="fa fa-reply" href="{% url 'comment-detail' post.liked_comment.user.username post.liked_comment.pk %}"></a>
+
+                                {% if post.liked_comment.get_children.count != 0 %}
+                                  <span><i class="number-of-reaction"> {{ post.liked_comment.get_children.count }}</i></span>
+                                {% else %}
+                                  <span> <i></i></span>
+                                {% endif %}
+                              {% endif %}
+                            {% endif %}
+
                           {% endif %}
+
+                          
                         </button>
                       </div>
   
                       <div class="retweet-icon">
+                        {% if post|class_name == 'Post' %}
+
                         <form action="{% url 'post-share' post.pk %}" method="post">
                             {% csrf_token %}
 
@@ -144,9 +345,73 @@
                               <i class="number-of-reaction">{{ post.shares.all.count }}</i>
                             </button>
                         </form>
-                      </div>
-                      
+
+                        {% elif post|class_name == 'Like' %}
+                          {% if post.liked_post %}
+                          <form action="{% url 'post-share' post.liked_post.pk %}" method="post">
+                            {% csrf_token %}
   
+                            <input type="hidden" name="next" value="{{ request.path }}">
+  
+                            <button type="submit">
+                              {% if request.user in post.liked_post.shares.all %}
+                              <span class="icon is-small"><i class="fa fa-retweet green"></i></span>
+  
+                              {% else %}
+                              <span class="icon is-small"><i class="fa fa-retweet" id="heart-toggle"></i></span>
+  
+                              {% endif %}
+                              <i class="number-of-reaction">{{ post.liked_post.shares.all.count }}</i>
+                            </button>
+                          </form>
+                          {% else %}
+                            {% if post.liked_comment.parent %}
+                            <form action="{% url 'comment-share' post.liked_comment.pk %}" method="post">
+                              {% csrf_token %}
+    
+                              <input type="hidden" name="next" value="{{ request.path }}">
+    
+                              <button type="submit">
+                                {% if request.user in post.liked_comment.shares.all %}
+                                <span class="icon is-small"><i class="fa fa-retweet green"></i></span>
+    
+                                {% else %}
+                                <span class="icon is-small"><i class="fa fa-retweet" id="heart-toggle"></i></span>
+    
+                                {% endif %}
+                                <i class="number-of-reaction">{{ post.liked_comment.shares.all.count }}</i>
+                              </button>
+                            </form>
+                            {% else %}
+                            <form action="{% url 'comment-share' post.liked_comment.pk %}" method="post">
+                              {% csrf_token %}
+    
+                              <input type="hidden" name="next" value="{{ request.path }}">
+    
+                              <button type="submit">
+                                {% if request.user in post.liked_comment.shares.all %}
+                                <span class="icon is-small"><i class="fa fa-retweet green"></i></span>
+    
+                                {% else %}
+                                <span class="icon is-small"><i class="fa fa-retweet" id="heart-toggle"></i></span>
+    
+                                {% endif %}
+                                <i class="number-of-reaction">{{ post.liked_comment.shares.all.count }}</i>
+                              </button>
+                            </form>
+                            {% endif %}
+                          {% endif %}
+
+
+                        {% endif %}
+
+                      </div>
+
+                       
+
+
+                      {% if post|class_name == 'Post' %}
+
                       <div class="heart-icon">
   
                         <form action="{% url 'post-like' post.pk %}" method="post">
@@ -174,32 +439,174 @@
   
                           
                       </div>
-  
-                      <div class="post-saved-item">
-                        <form action="{% url 'bookmark-post' post.pk %}" method="post">
-                          {% csrf_token %}
+                      {% elif post|class_name == 'Like' %}
+                          {% if post.liked_post %}
+                            <form action="{% url 'post-like' post.liked_post.pk %}" method="post">
+                              {% csrf_token %}
+    
+                              <input type="hidden" name="next" value="{{ request.path }}">
+    
+                              <button type="submit">
+                                {% if request.user in post.liked_post.likes.all %}
+                                <span class="icon is-small"><i class="fa fa-heart red"></i></span>
+    
+                                {% else %}
+                                <span class="icon is-small"><i class="fa fa-regular fa-heart" id="heart-toggle"></i></span>
+    
+                                {% endif %}
+                                <i class="number-of-reaction">{{ post.liked_post.likes.all.count }}</i>
+                              </button>
+                            </form>
+                          {% else %}
+                            {% if post.liked_comment.parent %}
+                            <form action="{% url 'comment-like' post.liked_comment.pk %}" method="post">
+                              {% csrf_token %}
+    
+                              <input type="hidden" name="next" value="{{ request.path }}">
+    
+                              <button type="submit">
+                                {% if request.user in post.liked_comment.likes.all %}
+                                <span class="icon is-small"><i class="fa fa-heart red"></i></span>
+    
+                                {% else %}
+                                <span class="icon is-small"><i class="fa fa-regular fa-heart" id="heart-toggle"></i></span>
+    
+                                {% endif %}
+                                <i class="number-of-reaction">{{ post.liked_comment.likes.all.count }}</i>
+                              </button>
+                            </form>
+                            {% else %}
+                            <form action="{% url 'comment-like' post.liked_comment.pk %}" method="post">
+                              {% csrf_token %}
+    
+                              <input type="hidden" name="next" value="{{ request.path }}">
+    
+                              <button type="submit">
+                                {% if request.user in post.liked_comment.likes.all %}
+                                <span class="icon is-small"><i class="fa fa-heart red"></i></span>
+    
+                                {% else %}
+                                <span class="icon is-small"><i class="fa fa-regular fa-heart" id="heart-toggle"></i></span>
+    
+                                {% endif %}
+                                <i class="number-of-reaction">{{ post.liked_comment.likes.all.count }}</i>
+                              </button>
+                            </form>
+                            {% endif %}
+                          {% endif %}
 
-                          <input type="hidden" name="next" value="{{ request.path }}">
-                          
+                      {% endif %}
+                       
 
-                          <button type="submit">    
 
-                              {% if request.user in post.bookmark.all %}
-                                <span class="icon is-small"><i class="fa fa-bookmark" id="heart-toggle"></i></span>
+
+                      {% if post|class_name == 'Post' %}
+                      
+                        <div class="post-saved-item">
+                          <form action="{% url 'bookmark-post' post.pk %}" method="post">
+                            {% csrf_token %}
+
+                            <input type="hidden" name="next" value="{{ request.path }}">
+                            
+
+                            <button type="submit">    
+
+                                {% if request.user in post.bookmark.all %}
+                                  <span class="icon is-small"><i class="fa fa-bookmark" id="heart-toggle"></i></span>
+
+                                {% else %}
+                                  <span class="icon is-small"><i class="fa fa-regular fa-bookmark" id="heart-toggle"></i></span>
+
+                                {% endif %}
+                            </button>
+
+                          </form>
+                        </div>
+
+                      {% elif post|class_name == 'Like' %}
+                        {% if post.liked_post %}
+                          <form action="{% url 'post-like' post.liked_post.pk %}" method="post">
+                            {% csrf_token %}
+
+                            <input type="hidden" name="next" value="{{ request.path }}">
+
+                            <button type="submit">
+                              {% if request.user in post.liked_post.likes.all %}
+                              <span class="icon is-small"><i class="fa fa-bookmark blue"></i></span>
 
                               {% else %}
-                                <span class="icon is-small"><i class="fa fa-regular fa-bookmark" id="heart-toggle"></i></span>
+                              <span class="icon is-small"><i class="fa fa-bookmark" id="heart-toggle"></i></span>
 
                               {% endif %}
-                          </button>
+                              <i class="number-of-reaction">{{ post.liked_post.likes.all.count }}</i>
+                            </button>
+                          </form>
+                        {% else %}
+                            {% if post.liked_comment.parent %}
+                              <form action="{% url 'comment-like' post.liked_comment.pk %}" method="post">
+                                {% csrf_token %}
 
-                        </form>
-                      </div>
+                                <input type="hidden" name="next" value="{{ request.path }}">
+
+                                <button type="submit">
+                                  {% if request.user in post.liked_comment.bookmark.all %}
+                                  <span class="icon is-small"><i class="fa fa-bookmark blue"></i></span>
+
+                                  {% else %}
+                                  <span class="icon is-small"><i class="fa fa-bookmark" id="heart-toggle"></i></span>
+
+                                  {% endif %}
+                                  <i class="number-of-reaction">{{ post.liked_comment.bookmark.all.count }}</i>
+                                </button>
+                              </form>
+                            {% else %}
+                              <form action="{% url 'comment-like' post.liked_comment.pk %}" method="post">
+                                {% csrf_token %}
+
+                                <input type="hidden" name="next" value="{{ request.path }}">
+
+                                <button type="submit">
+                                  {% if request.user in post.liked_comment.likes.all %}
+                                  <span class="icon is-small"><i class="fa fa-bookmark blue"></i></span>
+
+                                  {% else %}
+                                  <span class="icon is-small"><i class="fa fa-bookmark" id="heart-toggle"></i></span>
+
+                                  {% endif %}
+                                  <i class="number-of-reaction">{{ post.liked_comment.likes.all.count }}</i>
+                                </button>
+                              </form>
+                            {% endif %}
+                        {% endif %}
+
+                      {% endif %}
+                       
                   </div>
   
                 </div>
               </div>
+
+              {% if post|class_name == 'Post' %}
+
               <a href="{% url 'post-detail' post.user.username post.pk %}" class="post-link"></a>
+
+
+              {% elif post|class_name == 'Like' %}
+
+                {% if post.liked_post %}
+                  <a href="{% url 'post-detail' post.liked_post.user.username post.liked_post.pk %}" class="post-link"></a>
+
+                {% else %}
+                  {% if post.liked_comment.parent %}
+                    <a href="{% url 'comment-detail' post.liked_comment.user.username post.liked_comment.pk %}" class="post-link"></a>
+                  {% else %}
+                    <a href="{% url 'comment-detail' post.liked_comment.user.username post.liked_comment.pk %}" class="post-link"></a>
+
+                  {% endif %}
+                {% endif %}
+
+              {% endif %}
+              
             </div>      
           {% endfor %}
   
