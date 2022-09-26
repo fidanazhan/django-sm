@@ -1,6 +1,3 @@
-# django-sm
-Social media clone written in Django for the backend and simple HTML, CSS and Javascript for the frontend.
-
 # Social Media Clone (QuackQuack App)
 This project is an imitation of a social media website made with Django for backend and basic HTML, CSS, Javascript for the frontend. The UI/UX design are made with figma and all the design are code using pure CSS
 
@@ -40,21 +37,31 @@ Users can see the list of notifications and bookmark in notification page and bo
 
 **Index Page** - Page where users can write a post, get a list of posts, comments or activities from people who they follow. They can also react to the posts or comments. When they click to a certain post or comment, they will redirect to the ‘Post Detail View’ or ‘Comment Detail View’.
 
+![Index View](https://user-images.githubusercontent.com/108860416/192294958-ab0172c8-0c3c-4874-90cb-7790e0d6a717.PNG)
+
 &nbsp;
 
 **Post Detail Page** - Page where users can see the details about the post. Users can see the comments that are related to the post below the post. Only the user itself can edit or delete the post. 
+
+![Post Detail View](https://user-images.githubusercontent.com/108860416/192294966-217d0efc-054d-42dc-b55d-c9221e4547a5.PNG)
  
 &nbsp;
 
 **Comment Detail Page** - Page that displays the details for specific comments. Users can read the reply to the comments and same as post features, only the user itself can edit or delete the comment or reply.
 
+![Comment View](https://user-images.githubusercontent.com/108860416/192294945-8928911c-e137-4d0a-ade0-8ee61c0381b9.PNG)
+
  &nbsp;
 
 **Notification Page** - Page that shows all notification to the user.
 
+![Notification View](https://user-images.githubusercontent.com/108860416/192294962-e0115e03-deb9-4431-966d-c320eafe336b.PNG)
+
  &nbsp;
 
 **Post Edit Page** - Page where users can edit their own post. 
+
+![Post Edit View](https://user-images.githubusercontent.com/108860416/192294969-0e645679-6e52-4f16-880e-4005cb323c99.PNG)
 
  &nbsp;
 
