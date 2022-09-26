@@ -33,6 +33,14 @@ QuackQuack app is an imitation of social media apps like Twitter and Facebook wh
 - Users can search other users or post.
 - Users can see the list of notifications and bookmark in notification page and bookmark page.
 
+## URL NOTES AND REFERENCES
+
+![URL Notes   References](https://user-images.githubusercontent.com/108860416/192300701-2f38eb7f-c7eb-4c9a-911c-18263700521c.PNG)
+
+&nbsp;
+
+[Here](https://www.notion.so/3de9978e63ed4ca4ba380292635ae806?v=55abb802e4fc45fa80f6a59a4b012999) is references to the url for this app
+
 ## SCREENSHOT
 
 **Index Page** - Page where users can write a post, get a list of posts, comments or activities from people who they follow. They can also react to the posts or comments. When they click to a certain post or comment, they will redirect to the ‘Post Detail View’ or ‘Comment Detail View’.
