@@ -24,14 +24,14 @@ QuackQuack app is an imitation of social media apps like Twitter and Facebook wh
 
 ## **REQUIREMENT**
 
-Users need to register and login before using this app. (Authentication) 
-Users can write posts, comment and reply to comments.
-Users can search other users.
-Users can like, share, comment and bookmark posts or comments.
-They will be notified when other users follow them, comment on their post, like their post and share their post.
-Only the user can edit and delete their specific post and comment.
-Users can search other users or post.
-Users can see the list of notifications and bookmark in notification page and bookmark page.
+- Users need to register and login before using this app. (Authentication) 
+- Users can write posts, comment and reply to comments.
+- Users can search other users.
+- Users can like, share, comment and bookmark posts or comments.
+- They will be notified when other users follow them, comment on their post, like their post and share their post.
+- Only the user can edit and delete their specific post and comment.
+- Users can search other users or post.
+- Users can see the list of notifications and bookmark in notification page and bookmark page.
 
 ## SCREENSHOT
 
@@ -73,10 +73,10 @@ Not Completed. Ongoing development.
 
 ## WHAT IS NEXT?
 
-Complete the Search Page, Profile Page and Settings page.
-Add attached images features.
-Develop REST API using Django Rest Framework.
-Improve UI/UX and develop using Vue.js.
+- Complete the Search Page, Profile Page and Settings page.
+- Add attached images features.
+- Develop REST API using Django Rest Framework.
+- Improve UI/UX and develop using Vue.js.
 
 ## CONTACT 
 
