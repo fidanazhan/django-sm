@@ -74,7 +74,7 @@ Not Completed. Ongoing development.
 ## WHAT IS NEXT?
 
 - Complete the Search Page, Profile Page and Settings page.
-- Add attached images features.
+- Add 'Attach Image' features.
 - Develop REST API using Django Rest Framework.
 - Improve UI/UX and develop using Vue.js.
 
