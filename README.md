@@ -39,7 +39,9 @@ QuackQuack app is an imitation of social media apps like Twitter and Facebook wh
 
 &nbsp;
 
-[Here](https://www.notion.so/3de9978e63ed4ca4ba380292635ae806?v=55abb802e4fc45fa80f6a59a4b012999) is references to the url for this app
+Here is references for QuackQuack Apps url.
+- [Notion](https://www.notion.so/3de9978e63ed4ca4ba380292635ae806?v=55abb802e4fc45fa80f6a59a4b012999) 
+- [Google Sheet](https://docs.google.com/spreadsheets/d/19r4K1ZBiZLcjHXLbJfTjJ1C9AEOSi_KZ4DcZnmVTg5E/edit?usp=sharing)
 
 ## SCREENSHOT
 
